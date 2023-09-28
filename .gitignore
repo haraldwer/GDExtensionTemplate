@@ -1,0 +1,8 @@
+
+# Compiled objects
+*.dll
+*.exp
+*.lib
+*.exe
+*.obj
+
