@@ -1,11 +1,11 @@
 #pragma once
 
-#include <godot_cpp/classes/sprite2d.hpp>
+#include <godot_cpp/classes/node3d.hpp>
 
 namespace godot {
 
-class GDExample : public Sprite2D {
-    GDCLASS(GDExample, Sprite2D)
+class GDExample : public Node3D {
+    GDCLASS(GDExample, Node3D)
 
 private:
     double time_passed;
@@ -15,7 +15,6 @@ protected:
 
 public:
     GDExample();
-    ~GDExample();
 
     void _process(double delta);
 };
