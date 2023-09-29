@@ -1,0 +1,13 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Example", "Example\Example.vcxproj", "{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.ActiveCfg = editor|x64
+		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.Build.0 = editor|x64
+	EndGlobalSection
+EndGlobal
