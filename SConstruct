@@ -13,20 +13,21 @@ env = SConscript("godot-cpp/SConstruct")
 # - CPPDEFINES are for pre-processor defines
 # - LINKFLAGS are for linking flags
 
-env.Append(CPPPATH=["source/"])
-sources = Glob("source/*.cpp")
-
-# Recursive
-def getSubdirs(abs_path_dir) :  
-    lst = [ name for name in os.listdir(abs_path_dir) if os.path.isdir(os.path.join(abs_path_dir, name)) and name[0] != '.' ]
-    lst.sort()
+def getSubdirs(path) :  
+    lst = [ os.path.join(path, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) and name != ".idea" and name != "x64" ]
     return lst
 
-# Recursive add
-corePath = 'source'
-modules = getSubdirs(corePath)
-for module in modules :
-  sources += Glob(os.path.join(corePath, module, '*.cpp'))
+def getDirsRec(path) :
+    lst = getSubdirs(path)
+    for subdir in lst :
+        lst += getDirsRec(subdir)
+    return lst
+
+sources = Glob("source/*.cpp")
+subdirs = getDirsRec('source')
+for subdir in subdirs :
+    sources += Glob(os.path.join(subdir, '\\*.cpp'))
+    env.Append(CPPPATH=(subdir + "\\"))
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
