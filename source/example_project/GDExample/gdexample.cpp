@@ -2,7 +2,6 @@
 
 using namespace godot;
 
-
 void GDExample::_process(double delta)
 {
     time_passed += delta;

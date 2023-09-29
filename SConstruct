@@ -24,10 +24,13 @@ def getDirsRec(path) :
     return lst
 
 sources = Glob("source/*.cpp")
+env.Append(CPPPATH=["source/"])
+
 subdirs = getDirsRec('source')
 for subdir in subdirs :
-    sources += Glob(os.path.join(subdir, '\\*.cpp'))
-    env.Append(CPPPATH=(subdir + "\\"))
+    sources += Glob(subdir + "/*.cpp")
+    env.Append(CPPPATH=[subdir + "/"])
+
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
