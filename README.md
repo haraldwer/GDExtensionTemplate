@@ -18,7 +18,7 @@ See https://docs.godotengine.org/en/stable/contributing/development/compiling/co
 
 Setup: 
  - Clone the repository
- - Copy godot executable to repository folder
+ - Copy godot executable to repository folder and rename to "godot.exe"
 
 Notes: 
  - Intellisense / Intellij will only work after first compile
