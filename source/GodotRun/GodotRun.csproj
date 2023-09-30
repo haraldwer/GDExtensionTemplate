@@ -19,7 +19,7 @@
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
+        <OutputPath>$(SolutionDir).temp\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
@@ -28,13 +28,13 @@
         <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
+        <OutputPath>$(SolutionDir).temp\</OutputPath>
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <PropertyGroup>
-      <PostBuildEvent>copy $(SolutionDir)bin\Debug\GodotRun.exe $(SolutionDir)..\GodotProject\run.exe</PostBuildEvent>
+      <PostBuildEvent>copy $(SolutionDir).temp\GodotRun.exe $(SolutionDir)..\run.exe</PostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System"/>
