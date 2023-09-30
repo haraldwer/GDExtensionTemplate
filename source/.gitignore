@@ -2,7 +2,10 @@
 .idea/
 .vs/
 x64/
-.temp/
 bin/
 obj/
+.temp/
+
 .generated/
+*.generated.h
+*.generated.cpp
