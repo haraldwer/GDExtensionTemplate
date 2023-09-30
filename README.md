@@ -27,6 +27,7 @@ Here is how to use them:
  * REG_CLASS() - Use this macro instead of GDCLASS()
  * REG_FUNCTION() - Put this in front of your function
  * REG_PROPERTY() - Put this in front of your property
+
 The extension.cpp with class and function binding will be automatically generated based on extension.cpp.template. If you wish to add code to extension.cpp, just modify the template and your changes will be applied during next rebuild.  
 
 ## Notes
