@@ -4,7 +4,8 @@ This template project provides some useful functionality for working with GDExte
 
 Features: 
  - A .sln solution with an example .vcxproj project
- - One-click compilation + debugging
+ - Recursive SConstruct file (allowing for cpp files in subfolders)
+ - One-click IDE compilation + debugging
  - A pre-compile step that automatically registers classes, members and variables (similar to the unreal UCLASS/UPROPERTY functionality) (WIP)
  - Some useful bat scripts 
 
