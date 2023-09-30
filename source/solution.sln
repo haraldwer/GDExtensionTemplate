@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_project", "example_project\example_project.vcxproj", "{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegAutomation", "RegAutomation\RegAutomation.csproj", "{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodotRun", "GodotRun\GodotRun.csproj", "{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -9,5 +13,9 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.ActiveCfg = editor|x64
 		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.Build.0 = editor|x64
+		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 EndGlobal

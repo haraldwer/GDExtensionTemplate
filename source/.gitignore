@@ -1,4 +1,8 @@
 
-.idea/*
-x64/*
-*/x64/*
+.idea/
+.vs/
+x64/
+.temp/
+bin/
+obj/
+.generated/

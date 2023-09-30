@@ -13,10 +13,22 @@ namespace godot
 
     public: 
         void _process(double delta) override;
-
+        
         REG_FUNCTION()
         void set_var(int var);
 
+        REG_FUNCTION()
+        void set_property(float p_property)
+        {
+            property = p_property;
+        }
+
+        REG_FUNCTION()
+        float get_property() const { return property; }
+
+        REG_PROPERTY()
+        float property = 0; 
+        
     private:
         double time_passed = 0; 
     };

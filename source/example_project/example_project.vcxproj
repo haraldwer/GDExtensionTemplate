@@ -51,9 +51,15 @@
 
     <!-- The actual commands -->
     <NMakeBuildCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; build.bat</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>cmd /V /C &amp;&amp; $(SolutionDir)..\rebuild.bat</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>cmd /V /C &amp;&amp; $(SolutionDir)..\clean.bat</NMakeCleanCommandLine>
-    <NMakeOutput>$(SolutionDir)\..\godot.exe</NMakeOutput>
+    <NMakeReBuildCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; rebuild.bat</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; clean.bat</NMakeCleanCommandLine>
+
+    <!-- Output -->
+    <NMakeOutput>$(SolutionDir)..\run.exe</NMakeOutput>
+
+    <!-- Temp files -->
+    <OutDir>$(SolutionDir).temp\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir).temp\</IntDir>
 
     <!-- Preprocessor definitions -->
     <NMakePreprocessorDefinitions>TOOLS_ENABLED;DEBUG_ENABLED;NDEBUG;NO_EDITOR_SPLASH;WINDOWS_ENABLED;WASAPI_ENABLED;WINMIDI_ENABLED;TYPED_METHOD_BIND;WIN32;WINVER=0x0601;_WIN32_WINNT=0x0601;NOMINMAX;_WIN64;VULKAN_ENABLED;GLES3_ENABLED;_HAS_EXCEPTIONS=0;MINIZIP_ENABLED;BROTLI_ENABLED;CLIPPER2_ENABLED;ZSTD_STATIC_LINKING_ONLY;USE_VOLK;VK_USE_PLATFORM_WIN32_KHR;GLAD_ENABLED;EGL_ENABLED</NMakePreprocessorDefinitions>

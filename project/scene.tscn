@@ -1,9 +1,11 @@
-[gd_scene format=3 uid="uid://cpoduvjy1j42t"]
+[gd_scene load_steps=2 format=3 uid="uid://cpoduvjy1j42t"]
+
+[ext_resource type="Script" path="res://GDExample.gd" id="1_5go6h"]
 
 [node name="Node3D" type="Node3D"]
 
 [node name="GDExample" type="GDExample" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.209369, 0, 0)
+script = ExtResource("1_5go6h")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="GDExample"]
 

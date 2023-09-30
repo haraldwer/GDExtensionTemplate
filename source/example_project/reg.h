@@ -6,6 +6,11 @@ protected: \
 static void _bind_methods(); \
 private:
 
+// Add a way to inject code!
+// Preferably in REG_CLASS
+// If not in IDE, use include
+// #include ".generated/
+
 #define REG_FUNCTION()
 #define REG_PROPERTY()
 #define REG_SIGNAL()
