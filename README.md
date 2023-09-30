@@ -23,3 +23,4 @@ Setup:
 
 Notes: 
  - Intellisense / Intellij will only work after first compile
+ - NMake .sln requires an exe path without parameters. The GodotRun project is a workaround for this. 
