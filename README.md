@@ -14,7 +14,7 @@ Prerequsites:
  - SCons
  - .NETFramework v4.8
 
-See https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html#requirements
+See [Compiling godot requirements](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html#requirements)
 
 Setup: 
  - Clone the repository
