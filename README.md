@@ -13,7 +13,7 @@ This template project provides some useful functionality for working with GDExte
  * Godot 4 executable
  * C++ compiler
  * SCons
- * .NETFramework v4.8
+ * .NETFramework v4.8 (older versions might also work)
 
 See: [Compiling Godot](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html#requirements)
 
@@ -33,4 +33,5 @@ The extension.cpp with class and function binding will be automatically generate
 ## Notes
  * Intellisense / Intellij will only work after first compile
  * The RegAutomation project will compile and run when you compile your c++ code. RegAutomation is responsible for generating the registration code and you can find the resulting files in /source/{project name}/.generated/. 
- * NMake .sln requires an exe path without parameters. The GodotRun project is a workaround for this. 
+ * NMake .sln requires an exe path without parameters. The GodotRun project is a workaround for this.
+ * This has only been tested using Rider 2023.2
