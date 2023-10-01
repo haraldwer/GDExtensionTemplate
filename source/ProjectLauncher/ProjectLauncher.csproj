@@ -8,8 +8,8 @@
         <ProjectGuid>{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>GodotRun</RootNamespace>
-        <AssemblyName>GodotRun</AssemblyName>
+        <RootNamespace>ProjectLauncher</RootNamespace>
+        <AssemblyName>ProjectLauncher</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -34,7 +34,7 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <PropertyGroup>
-      <PostBuildEvent>copy $(SolutionDir).temp\GodotRun.exe $(SolutionDir)..\run.exe</PostBuildEvent>
+      <PostBuildEvent>copy $(SolutionDir).temp\ProjectLauncher.exe $(SolutionDir)..\run.exe</PostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System"/>

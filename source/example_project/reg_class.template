@@ -1,0 +1,30 @@
+#pragma once
+
+#include <godot_cpp/core/class_db.hpp>
+
+REG_INCLUDE
+
+namespace godot
+{
+    void REG_CLASS_NAME::_bind_methods() 
+    {
+        REG_BIND_FUNCTIONS
+        REG_BIND_PROPERTIES
+    }
+
+/*
+    class REG_CLASS_NAME_Gen : public REG_CLASS_NAME
+    {
+        GDCLASS(REG_CLASS_NAME_Gen, REG_CLASS_NAME)
+
+    public:
+
+        REG_GEN_PROPERTY_FUNCTIONS
+        
+        static void _bind_methods()
+        {
+            REG_BIND_PROPERTY_FUNCTIONS
+        }        
+    };
+*/
+}

@@ -5,8 +5,9 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 
-#include "reg.h"
-#include ".generated/reg.generated.h"
+#ifndef REG_IN_IDE
+#include ".generated/reg_incl.generated.h"
+#endif
 
 using namespace godot;
 
@@ -15,7 +16,11 @@ void initialize_extension(ModuleInitializationLevel p_level)
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
         return;
 
-    REG_EXT_INITIALIZE()
+    #ifndef REG_IN_IDE
+    #include ".generated/reg_init.generated.h"
+    #endif
+
+    
 }
 
 void uninitialize_extension(ModuleInitializationLevel p_level)
@@ -23,7 +28,9 @@ void uninitialize_extension(ModuleInitializationLevel p_level)
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
         return;
     
-    REG_EXT_DEINITIALIZE()
+    #ifndef REG_IN_IDE
+    #include ".generated/reg_deinit.generated.h"
+    #endif
 }
 
 extern "C" {

@@ -31,8 +31,6 @@ for subdir in subdirs :
     sources += Glob(subdir + "/*.cpp")
     env.Append(CPPPATH=[subdir + "/"])
 
-print(env.Dump())
-
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "project/bin/libgdexample.{}.{}.framework/libgdexample.{}.{}".format(

@@ -33,9 +33,9 @@ namespace RegAutomation
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.h", SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                if (file.Contains(".reg_generated"))
+                if (file.Contains(".generated.h"))
                     continue;
-                if (file.Contains("\\reg.h")) 
+                if (file.Contains("\\registration.h")) 
                     continue;
                 if (file == "")
                     continue;

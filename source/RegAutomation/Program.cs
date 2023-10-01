@@ -95,29 +95,26 @@ namespace RegAutomation
         
         static void Generate()
         {
+            // Read template content
+            const string templatePath = "reg_class.template";
+            if (!File.Exists(templatePath))
+                return;
+            string template = File.ReadAllText(templatePath);
+            
             ThreadedIter(type =>
             {
                 if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
                     return;
 
-                string content = "";
-
-                // Add includes!
-                content += "#include \"" + type.Key + "\"\n";
-                content += "#include <godot_cpp/core/class_db.hpp>\n\n";
-                content += "using namespace godot;\n\n";
-
-                // Add functionality
-                content += "void GDExample::_bind_methods() \n{\n";
-
+                string content = template;
+                content = content.Replace("REG_CLASS_NAME", type.Value.Name);
+                
                 Pattern_Class.Generate(type, ref content);
                 Pattern_Function.Generate(type, ref content);
                 Pattern_Property.Generate(type, ref content);
 
-                content += "}\n";
-
                 // Write to file
-                string file = type.Value.Name + ".generated.cpp";
+                string file = type.Value.Name + ".generated.h";
                 GenerateFile(file, content);
             });
         }
@@ -125,24 +122,10 @@ namespace RegAutomation
         static void GenerateRegister()
         {
             // Create reg and include code
-            string reg = "";
-            string include = "#pragma once \n\n";
-            
-            reg += Pattern_Class.GetReg();
-            include += Pattern_Class.GetIncl(); 
-            
-            // Add reg to template
-            const string templatePath = "extension.cpp.template";
-            if (File.Exists(templatePath))
-            {
-                string template = File.ReadAllText(templatePath);
-                template = template.Replace("REG_EXT_INITIALIZE()", reg);
-                template = template.Replace("REG_EXT_DEINITIALIZE()", "");
-                GenerateFile("extension.generated.cpp", template);
-            }
-            
-            // Add includes
-            GenerateFile("reg.generated.h", include);
+            GenerateFile("reg_incl.generated.h", Pattern_Class.GetIncl());
+            GenerateFile("reg_init.generated.h", Pattern_Class.GetReg());
+            GenerateFile("reg_deinit.generated.h", "");
+            File.SetLastWriteTime("extension.cpp", DateTime.Now);
         }
 
         static void GenerateFile(string name, string content, bool gen = true)

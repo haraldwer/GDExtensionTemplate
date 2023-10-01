@@ -39,14 +39,16 @@ namespace RegAutomation
 
         public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
         {
+            string bindings = "";
             foreach (var func in type.Value.Functions)
             {
-                content += "\tClassDB::bind_method(D_METHOD(\"" + func.Key + "\"";
+                bindings += "ClassDB::bind_method(D_METHOD(\"" + func.Key + "\"";
                 foreach (var param in func.Value.Params)
                     if (param != "")
-                        content += ", \"" + param + "\"";
-                content += "), &" + type.Value.Name + "::" + func.Key + ");\n";
+                        bindings += ", \"" + param + "\"";
+                bindings += "), &" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
             }
+            content = content.Replace("REG_BIND_FUNCTIONS", bindings);
         }
     }
 }

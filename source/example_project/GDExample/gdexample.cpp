@@ -10,5 +10,6 @@ void GDExample::_process(double delta)
 
 void GDExample::set_var(int var)
 {
-    printf("Var: %i", var);
+    printf("Var: %i\n", var);
 }
+

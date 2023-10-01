@@ -29,7 +29,7 @@ namespace RegAutomation
 
         public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
         {
-            
+            content = content.Replace("REG_INCLUDE", "#include \"" + type.Key + "\"");
         }
         
         public static string GetReg()
@@ -45,7 +45,8 @@ namespace RegAutomation
         {
             string include = "";
             foreach (var type in DB.Types)
-                include += "#include \"" + type.Key + "\"\n";
+                if (type.Value.Name != "")
+                    include += "#include \".generated/" + type.Value.Name + ".generated.h\"\n";
             return include;
         }
     }

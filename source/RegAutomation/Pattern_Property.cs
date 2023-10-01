@@ -36,21 +36,12 @@ namespace RegAutomation
 
         public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
         {
+            string propertyBindings = "";
+            string functions = "";
+            string functionBindings = "";
+            
             foreach (var func in type.Value.Properties)
             {
-                // ClassDB::bind_method(D_METHOD("get_speed"), &GDExample::get_speed);
-                // ClassDB::bind_method(D_METHOD("set_speed", "p_speed"), &GDExample::set_speed);
-                // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
-                
-                // TODO: Add get and set to header!
-                //content += "\tClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\", ";
-                //content += "&" + type.Value.Name + "::" + func.Key + ");\n";
-                //content += "\tClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", ";
-                //content += "&" + type.Value.Name + "::" + func.Key + ");\n"; 
-
-                
-                // How to inject code? 
-
                 string variant = "";
                 switch (func.Value.Type)
                 {
@@ -62,22 +53,31 @@ namespace RegAutomation
                         continue;
                 }
 
-                content += "\tClassDB::add_property(\"" + type.Value.Name + "\", ";
-                
-                // Type
-                content += "PropertyInfo(Variant::" + variant + ", ";
-                content += "\"" + func.Key + "\"";
-                
-                
-                
+                // Property bindings
+                propertyBindings += "ClassDB::add_property(\"" + type.Value.Name + "\", ";
+                propertyBindings += "PropertyInfo(Variant::" + variant + ", ";
+                propertyBindings += "\"" + func.Key + "\"";
                 // TODO: Meta!
+                // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
+                propertyBindings += "), ";
+                propertyBindings += "\"set_" + func.Key + "\", ";
+                propertyBindings += "\"get_" + func.Key + "\");\n\t\t\t";
+
+                // Function generation
+                functions += func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; } \n\t\t";
+                functions += "void set_" + func.Key + "(const " + func.Value.Type + " p) { " + func.Key + " = p; } \n\t\t";
                 
-                content += "), ";
-                
-                // Getter / setter
-                content += "\"set_" + func.Key + "\", ";
-                content += "\"get_" + func.Key + "\");\n";
+                // Function bindings
+                //functionBindings += "ClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\"), ";
+                //functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
+                //functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", ";
+                //functionBindings += "\"" + func.Key + "\"), ";
+                //functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t"; 
             }
+
+            content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
+            content = content.Replace("REG_BIND_PROPERTY_FUNCTIONS", functionBindings);
+            content = content.Replace("REG_GEN_PROPERTY_FUNCTIONS", functions);
         }
     }
 }

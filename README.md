@@ -5,7 +5,7 @@ This template project provides some useful functionality for working with GDExte
 ## Features
  * A ``.sln`` solution with an example ``.vcxproj`` project
  * Recursive ``SConstruct`` file (allowing for cpp files in subfolders)
- * One-click IDE compilation + debugging
+ * One-click IDE compilation
  * A pre-compile step that automatically registers classes, members and variables (similar to the unreal UCLASS/UPROPERTY functionality) (WIP)
  * Some useful .bat scripts 
 
@@ -30,9 +30,12 @@ Here is how to use them:
 
 The ``extension.cpp`` with class and function binding will be automatically generated based on ``extension.cpp.template``. If you wish to add code to ``extension.cpp``, just modify the template and your changes will be applied during next rebuild.  
 
+## Known issues
+ * The debugger does not attach automatically to the godot process. You can still attach manually.
+
 ## Notes
  * The ``.sln`` and ``.vcxproj`` is based on the generated result of running ``scons platform=windows vsproj=yes``
  * Intellisense / Intellij will only work after first compile
  * The ``RegAutomation`` project will compile and run when you compile your c++ code. ``RegAutomation.exe`` is responsible for generating the registration code and you can find the resulting files in ``/source/{project name}/.generated/``. 
- * NMake .sln requires an exe path without parameters. The ``GodotRun`` project is a workaround for this.
+ * NMake .sln requires an exe path without parameters. The ``ProjectLauncher`` project is a workaround for this.
  * This has only been tested using Rider 2023.2

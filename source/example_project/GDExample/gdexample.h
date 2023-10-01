@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../reg.h"
+#include "../registration.h"
 
 #include <godot_cpp/classes/node3d.hpp>
 
@@ -16,16 +16,7 @@ namespace godot
         
         REG_FUNCTION()
         void set_var(int var);
-
-        REG_FUNCTION()
-        void set_property(float p_property)
-        {
-            property = p_property;
-        }
-
-        REG_FUNCTION()
-        float get_property() const { return property; }
-
+        
         REG_PROPERTY()
         float property = 0; 
         
