@@ -7,6 +7,8 @@
 
 #include "registration.h"
 
+#pragma warning( disable : 4005 )
+
 #ifndef REG_IN_IDE
 #include ".generated/reg_incl.generated.h"
 #endif

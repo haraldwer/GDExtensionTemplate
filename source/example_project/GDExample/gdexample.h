@@ -19,8 +19,8 @@ namespace godot
         REG_FUNCTION()
         void set_var(int var);
         
-        REG_PROPERTY()
-        float property = 0; 
+        REG_PROPERTY(PROPERTY_HINT_RANGE, "0,20,0.01")
+        float property = 0;
         
     private:
         double time_passed = 0; 

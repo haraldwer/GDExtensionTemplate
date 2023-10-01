@@ -13,7 +13,8 @@ namespace RegAutomation
         
         public class Prop
         {
-            public string Type = ""; 
+            public string Type = "";
+            public string Meta = "";
         }
 
         public class Type

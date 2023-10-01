@@ -16,7 +16,11 @@ namespace RegAutomation
             foreach (Match match in matches)
             {
                 Console.WriteLine("REG_PROPERTY: " + Path.GetFileName(type.Key));
-                int startIndex = match.Value.Length + match.Index + 2;
+
+                string metaStart = type.Value.Content.Substring(match.Index + match.Value.Length + 1);
+                string meta = metaStart.Substring(0, metaStart.IndexOf(')'));
+                
+                int startIndex = match.Value.Length + match.Index + meta.Length + 2;
                 string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
                 string content = sub.Substring(0, sub.IndexOf(';')).Trim();
                 var declaration = content.Split(' ');
@@ -29,7 +33,8 @@ namespace RegAutomation
                 string name = declaration[1];
                 type.Value.Properties[name] = new DB.Prop()
                 {
-                    Type = var
+                    Type = var,
+                    Meta = meta
                 };
             }
         }
@@ -41,23 +46,23 @@ namespace RegAutomation
             
             foreach (var func in type.Value.Properties)
             {
-                string variant = "";
-                switch (func.Value.Type)
+                string variant = func.Value.Type.ToUpper();
+                if (variant == "")
                 {
-                    case "float":
-                        variant = "FLOAT";
-                        break;
-                    default:
-                        Console.WriteLine("Unknown type: " + func.Value.Type);
-                        continue;
+                    Console.WriteLine("Unknown type: " + func.Value.Type);
+                    continue;
                 }
-
+                
                 // Property bindings
                 propertyBindings += "ClassDB::add_property(\"" + type.Value.Name + "\", ";
                 propertyBindings += "PropertyInfo(Variant::" + variant + ", ";
                 propertyBindings += "\"" + func.Key + "\"";
+
+                if (func.Value.Meta != "")
+                    propertyBindings += ", " + func.Value.Meta;
                 // TODO: Meta!
                 // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
+                
                 propertyBindings += "), ";
                 propertyBindings += "\"set_" + func.Key + "\", ";
                 propertyBindings += "\"get_" + func.Key + "\");\n\t\t";
