@@ -9,7 +9,7 @@ namespace godot
     class GDExample : public Node3D
     {
 
-        #include REG_CLASS(GDExample)
+        REG_CLASS()
     
     public:
 

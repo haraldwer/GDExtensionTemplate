@@ -48,7 +48,7 @@ namespace RegAutomation
         {
             try
             {
-                foreach (var file in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.generated.cpp"))
+                foreach (var file in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.generated.h"))
                 {
                     if (WrittenFiles.ContainsKey(file))
                         continue;
@@ -106,19 +106,22 @@ namespace RegAutomation
                 if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
                     return;
 
-                string inject = ""; // Injection is written to .injected.h and injected into the class definition
-                string content = template; // Content is written to .generated.h
+                string inject = "#define REG_CLASS() \n";
+                string content = template;
                 content = content.Replace("REG_CLASS_NAME", type.Value.Name);
                 
                 Pattern_Class.Generate(type, ref content, ref inject);
                 Pattern_Function.Generate(type, ref content, ref inject);
                 Pattern_Property.Generate(type, ref content, ref inject);
 
+                inject = inject.Replace("\n", "\\\n");
+                inject += "private: ";
+                
+                content = content.Replace("REG_INJECT", inject);
+                
                 // Write to file
                 string contentFile = type.Value.Name + ".generated.h";
                 GenerateFile(contentFile, content);
-                string injectFile = type.Value.Name + ".injected.h";
-                GenerateFile(injectFile, inject);
             });
         }
         

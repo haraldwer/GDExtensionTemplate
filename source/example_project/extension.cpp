@@ -5,6 +5,8 @@
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/godot.hpp>
 
+#include "registration.h"
+
 #ifndef REG_IN_IDE
 #include ".generated/reg_incl.generated.h"
 #endif

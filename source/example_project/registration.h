@@ -1,6 +1,3 @@
-
-// Delaying include guard intentionally
-#include "registration_internal.h"
 #pragma once
 
 // Use these macros to automate registration
@@ -8,8 +5,7 @@
 /**
  * Replace GDCLASS(name, parent) with #include REG_CLASS(name)
  */
-#define REG_CLASS(name) \
-REG_INJECT(name) \
+#define REG_CLASS() 
 
 /**
  * Usage:

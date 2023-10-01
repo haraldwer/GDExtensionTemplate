@@ -16,10 +16,22 @@ namespace RegAutomation
             foreach (Match match in matches)
             {
                 Console.WriteLine("REG_CLASS: " + Path.GetFileName(type.Key));
-                int startIndex = match.Index + match.Value.Length + 1;
-                string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
-                string name = sub.Substring(0, sub.IndexOf(')'));
-                type.Value.Name = name;
+
+                string search = type.Value.Content.Substring(0, match.Index);
+                int classFind = search.LastIndexOf("class ");
+                if (classFind == -1)
+                    continue;
+
+                string classDef = search.Substring(classFind + "class ".Length);
+                string nameEnd = classDef.Substring(0, classDef.IndexOf(':')).Trim();
+                Console.WriteLine("Name: " + nameEnd);
+                type.Value.Name = nameEnd; 
+                
+                
+                //int startIndex = match.Index + match.Value.Length + 1;
+                //string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
+                //string name = sub.Substring(0, sub.IndexOf(')'));
+                //type.Value.Name = name;
             }
         }
 
