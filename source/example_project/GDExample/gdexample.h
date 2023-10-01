@@ -11,8 +11,10 @@ namespace godot
 
         #include REG_CLASS(GDExample)
     
-    public: 
-        void _process(double delta) override;
+    public:
+
+        REG_FUNCTION()
+        void update(double delta);
         
         REG_FUNCTION()
         void set_var(int var);

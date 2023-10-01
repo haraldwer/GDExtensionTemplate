@@ -64,14 +64,13 @@ namespace RegAutomation
 
                 // Function generation
                 inject += "\t" + func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; }\n";
-                inject += "\tvoid set_" + func.Key + "(const " + func.Value.Type + " p) { " + func.Key + " = p; }\n";
+                inject += "\tvoid set_" + func.Key + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n";
                 
                 // Function bindings
                 functionBindings += "ClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\"), ";
-                functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
-                functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", ";
-                functionBindings += "\"" + func.Key + "\"), ";
-                functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t"; 
+                functionBindings += "&" + type.Value.Name + "::get_" + func.Key + ");\n\t";
+                functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", \"p\"), ";
+                functionBindings += "&" + type.Value.Name + "::set_" + func.Key + ");\n\t"; 
             }
 
             content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
