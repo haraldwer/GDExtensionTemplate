@@ -19,8 +19,6 @@ void initialize_extension(ModuleInitializationLevel p_level)
     #ifndef REG_IN_IDE
     #include ".generated/reg_init.generated.h"
     #endif
-
-    
 }
 
 void uninitialize_extension(ModuleInitializationLevel p_level)

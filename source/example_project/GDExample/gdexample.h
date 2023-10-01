@@ -8,9 +8,9 @@ namespace godot
 {
     class GDExample : public Node3D
     {
-        
-        REG_CLASS(GDExample, Node3D)
 
+        #include REG_CLASS(GDExample)
+    
     public: 
         void _process(double delta) override;
         

@@ -20,7 +20,6 @@ namespace RegAutomation
         {
             public string Name = "";
             public string Content = "";
-            public string Parent = "";
             
             public Dictionary<string, Func> Functions = new Dictionary<string, Func>();
             public Dictionary<string, Prop> Properties = new Dictionary<string, Prop>();
@@ -33,7 +32,7 @@ namespace RegAutomation
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.h", SearchOption.AllDirectories);
             foreach (var file in files)
             {
-                if (file.Contains(".generated.h"))
+                if (file.Contains(".generated.h") || file.Contains(".injected.h"))
                     continue;
                 if (file.Contains("\\registration.h")) 
                     continue;

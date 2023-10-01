@@ -106,16 +106,19 @@ namespace RegAutomation
                 if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
                     return;
 
-                string content = template;
+                string inject = ""; // Injection is written to .injected.h and injected into the class definition
+                string content = template; // Content is written to .generated.h
                 content = content.Replace("REG_CLASS_NAME", type.Value.Name);
                 
-                Pattern_Class.Generate(type, ref content);
-                Pattern_Function.Generate(type, ref content);
-                Pattern_Property.Generate(type, ref content);
+                Pattern_Class.Generate(type, ref content, ref inject);
+                Pattern_Function.Generate(type, ref content, ref inject);
+                Pattern_Property.Generate(type, ref content, ref inject);
 
                 // Write to file
-                string file = type.Value.Name + ".generated.h";
-                GenerateFile(file, content);
+                string contentFile = type.Value.Name + ".generated.h";
+                GenerateFile(contentFile, content);
+                string injectFile = type.Value.Name + ".injected.h";
+                GenerateFile(injectFile, inject);
             });
         }
         

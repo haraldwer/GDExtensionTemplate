@@ -37,7 +37,7 @@ namespace RegAutomation
             }
         }
 
-        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
+        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
         {
             string bindings = "";
             foreach (var func in type.Value.Functions)
@@ -46,7 +46,7 @@ namespace RegAutomation
                 foreach (var param in func.Value.Params)
                     if (param != "")
                         bindings += ", \"" + param + "\"";
-                bindings += "), &" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
+                bindings += "), &" + type.Value.Name + "::" + func.Key + ");\n\t\t";
             }
             content = content.Replace("REG_BIND_FUNCTIONS", bindings);
         }

@@ -17,7 +17,6 @@
     <ClInclude Include="GDExample\gdexample.h" />
     <ClInclude Include="registration.h" />
     <ClInclude Include="extension.h" />
-    <ClInclude Include="registration_helpers.h" />
     <ClInclude Include="registration_internal.h" />
   </ItemGroup>
   <ItemGroup>

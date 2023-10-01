@@ -34,10 +34,9 @@ namespace RegAutomation
             }
         }
 
-        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
+        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
         {
             string propertyBindings = "";
-            string functions = "";
             string functionBindings = "";
             
             foreach (var func in type.Value.Properties)
@@ -61,23 +60,22 @@ namespace RegAutomation
                 // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
                 propertyBindings += "), ";
                 propertyBindings += "\"set_" + func.Key + "\", ";
-                propertyBindings += "\"get_" + func.Key + "\");\n\t\t\t";
+                propertyBindings += "\"get_" + func.Key + "\");\n\t\t";
 
                 // Function generation
-                functions += func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; } \n\t\t";
-                functions += "void set_" + func.Key + "(const " + func.Value.Type + " p) { " + func.Key + " = p; } \n\t\t";
+                inject += "\t" + func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; }\n";
+                inject += "\tvoid set_" + func.Key + "(const " + func.Value.Type + " p) { " + func.Key + " = p; }\n";
                 
                 // Function bindings
-                //functionBindings += "ClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\"), ";
-                //functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
-                //functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", ";
-                //functionBindings += "\"" + func.Key + "\"), ";
-                //functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t"; 
+                functionBindings += "ClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\"), ";
+                functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t";
+                functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", ";
+                functionBindings += "\"" + func.Key + "\"), ";
+                functionBindings += "&" + type.Value.Name + "::" + func.Key + ");\n\t\t\t"; 
             }
 
             content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
             content = content.Replace("REG_BIND_PROPERTY_FUNCTIONS", functionBindings);
-            content = content.Replace("REG_GEN_PROPERTY_FUNCTIONS", functions);
         }
     }
 }

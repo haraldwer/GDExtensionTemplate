@@ -18,18 +18,18 @@ namespace RegAutomation
                 Console.WriteLine("REG_CLASS: " + Path.GetFileName(type.Key));
                 int startIndex = match.Index + match.Value.Length + 1;
                 string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
-                string parameters = sub.Substring(0, sub.IndexOf(')'));
-                var split = parameters.Split(',');
-                if (split.Length < 2)
-                    continue;
-                type.Value.Name = split[0];
-                type.Value.Parent = split[1]; 
+                string name = sub.Substring(0, sub.IndexOf(')'));
+                type.Value.Name = name;
             }
         }
 
-        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content)
+        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
         {
             content = content.Replace("REG_INCLUDE", "#include \"" + type.Key + "\"");
+
+            inject += "\tGDCLASS(" + type.Value.Name + ", Node3D)\n";
+            inject += "protected: \n";
+            inject += "\tstatic void _bind_methods();\n";
         }
         
         public static string GetReg()

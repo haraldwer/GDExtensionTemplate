@@ -28,7 +28,7 @@ Here is how to use them:
  * ``REG_FUNCTION()`` - Put this in front of your function
  * ``REG_PROPERTY()`` - Put this in front of your property
 
-The ``extension.cpp`` with class and function binding will be automatically generated based on ``extension.cpp.template``. If you wish to add code to ``extension.cpp``, just modify the template and your changes will be applied during next rebuild.  
+Registration-code will be injected into ``extension.cpp``. Class bindings will be generated based on ``reg_class.template``. 
 
 ## Known issues
  * The debugger does not attach automatically to the godot process. You can still attach manually.
