@@ -5,16 +5,13 @@ import sys
 
 env = SConscript("godot-cpp/SConstruct")
 
-# For reference:
-# - CCFLAGS are compilation flags shared between C and C++
-# - CFLAGS are for C-specific compilation flags
-# - CXXFLAGS are for C++-specific compilation flags
-# - CPPFLAGS are for pre-processor flags
-# - CPPDEFINES are for pre-processor defines
-# - LINKFLAGS are for linking flags
-
 def getSubdirs(path) :  
-    lst = [ os.path.join(path, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name)) and name != ".idea" and name != "x64" ]
+    lst = [ os.path.join(path, name) 
+        for name in os.listdir(path) 
+            if os.path.isdir(os.path.join(path, name)) and 
+                name != ".idea" and 
+                name != "x64" and 
+                name != ".temp" ]
     return lst
 
 def getDirsRec(path) :
@@ -30,6 +27,12 @@ subdirs = getDirsRec('source')
 for subdir in subdirs :
     sources += Glob(subdir + "/*.cpp")
     env.Append(CPPPATH=[subdir + "/"])
+
+# Add project includes
+env.Append(INCLUDE="source");
+env.Append(INCLUDE="registration");
+
+print(env.Dump())
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(

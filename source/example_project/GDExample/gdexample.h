@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../registration.h"
+#include "example_project/registration.h"
 
 #include <godot_cpp/classes/node3d.hpp>
 
@@ -23,6 +23,8 @@ namespace godot
         float property = 0;
         
     private:
-        double time_passed = 0; 
+        
+        double time_passed = 0;
+
     };
 }
