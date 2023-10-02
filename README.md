@@ -1,4 +1,4 @@
-# GodotCpp
+# GDExtension Template
 
 This template project provides some useful functionality for working with GDExtension in Visual Studio / Rider in Windows. 
 
