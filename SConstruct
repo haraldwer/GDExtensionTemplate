@@ -30,7 +30,6 @@ for subdir in subdirs :
 
 # Add project includes
 env.Append(INCLUDE="source");
-env.Append(INCLUDE="registration");
 
 print(env.Dump())
 

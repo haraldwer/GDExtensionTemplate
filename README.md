@@ -18,9 +18,9 @@ This template project provides some useful functionality for working with GDExte
 See [Compiling Godot](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html#requirements)
 
 ## Setup 
- * Clone the repository
- * Copy godot executable to repository folder and rename to ``godot.exe``
- * In your IDE, use ``ProjectLauncher`` configuration 
+ * Clone the repository. If the ``godot-cpp`` folder is empty, try ``--recursive`` when cloning to also get the submodules.
+ * Copy godot executable to repository folder and rename to ``godot.exe``.
+ * In your IDE, use ``ProjectLauncher`` configuration.
 
 ## Usage
 Some macros exist in reg.h that provide automated registration for classes, functions and properties. 
