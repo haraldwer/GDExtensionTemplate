@@ -26,16 +26,14 @@ namespace RegAutomation
                 // The last token is always the function name
                 string name = tokens[tokens.Length - 1];
                 bool isStatic = false;
-                if(tokens.Length == 3)
+
+                // TODO: Virtual
+                // Use Contains here because static could be before or after the return type
+                if (tokens.Contains("static"))
                 {
-                    // TODO: Virtual
-                    // Use Contains here because static could be before or after the return type
-                    if (tokens.Contains("static"))
-                    {
-                        isStatic = true;
-                    }
+                    isStatic = true;
+                    Console.WriteLine("Registered as static");
                 }
-                else throw new Exception($"Expected two or three tokens but found {tokens.Length}");
                 
                 int paramIndex = content.IndexOf('(') + 1;
                 int paramEndIndex = content.LastIndexOf(')');
