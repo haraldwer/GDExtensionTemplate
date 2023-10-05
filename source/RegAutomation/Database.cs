@@ -9,6 +9,7 @@ namespace RegAutomation
         public class Func
         {
             public List<string> Params = new List<string>();
+            public bool IsStatic = false;
         }
         
         public class Prop
