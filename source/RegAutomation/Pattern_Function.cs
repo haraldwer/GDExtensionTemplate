@@ -28,9 +28,9 @@ namespace RegAutomation
                 bool isStatic = false;
                 if(tokens.Length == 3)
                 {
-                    // <static/virtual> <return type> <function name>
                     // TODO: Virtual
-                    if (tokens[0] == "static")
+                    // Use Contains here because static could be before or after the return type
+                    if (tokens.Contains("static"))
                     {
                         isStatic = true;
                     }
