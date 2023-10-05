@@ -18,6 +18,11 @@ namespace RegAutomation
             public string Meta = "";
         }
 
+        public class Enum
+        {
+            public List<(string, int)> KeyValues = new List<(string, int)>();
+        }
+
         public class Type
         {
             public string Name = "";
@@ -25,6 +30,7 @@ namespace RegAutomation
             
             public Dictionary<string, Func> Functions = new Dictionary<string, Func>();
             public Dictionary<string, Prop> Properties = new Dictionary<string, Prop>();
+            public Dictionary<string, Enum> Enums = new Dictionary<string, Enum>();
         }
         
         public static Dictionary<string, Type> Types = new Dictionary<string, Type>();
