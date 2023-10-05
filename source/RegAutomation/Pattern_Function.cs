@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace RegAutomation
@@ -21,7 +22,18 @@ namespace RegAutomation
                 string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
                 string content = sub.Substring(0, sub.IndexOf(';'));
                 string func = content.Substring(0, content.IndexOf('(')).Trim();
-                string name = func.Substring(func.IndexOf(' ') + 1);
+                string[] tokens = func.Split(' ');
+                // The last token is always the function name
+                string name = tokens[tokens.Length - 1];
+                bool isStatic = false;
+
+                // TODO: Virtual
+                // Use Contains here because static could be before or after the return type
+                if (tokens.Contains("static"))
+                {
+                    isStatic = true;
+                    Console.WriteLine("Registered as static");
+                }
                 
                 int paramIndex = content.IndexOf('(') + 1;
                 int paramEndIndex = content.LastIndexOf(')');
@@ -32,23 +44,27 @@ namespace RegAutomation
                 
                 type.Value.Functions[name] = new DB.Func()
                 {
-                    Params = paramResult
+                    Params = paramResult,
+                    IsStatic = isStatic,
                 };
             }
         }
 
         public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
         {
-            string bindings = "";
+            var bindings = new StringBuilder();
             foreach (var func in type.Value.Functions)
             {
-                bindings += "ClassDB::bind_method(D_METHOD(\"" + func.Key + "\"";
+                if (func.Value.IsStatic)
+                    bindings.Append($"ClassDB::bind_static_method(\"{type.Value.Name}\", D_METHOD(\"{func.Key}\"");
+                else
+                    bindings.Append($"ClassDB::bind_method(D_METHOD(\"{func.Key}\"");
                 foreach (var param in func.Value.Params)
                     if (param != "")
-                        bindings += ", \"" + param + "\"";
-                bindings += "), &" + type.Value.Name + "::" + func.Key + ");\n\t\t";
+                        bindings.Append($", \"{param}\"");
+                bindings.Append($"), &{type.Value.Name}::{func.Key});\n\t\t");
             }
-            content = content.Replace("REG_BIND_FUNCTIONS", bindings);
+            content = content.Replace("REG_BIND_FUNCTIONS", bindings.ToString());
         }
     }
 }
