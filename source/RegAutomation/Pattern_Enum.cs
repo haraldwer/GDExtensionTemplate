@@ -24,7 +24,6 @@ namespace RegAutomation
                 string content = sub.Substring(0, sub.IndexOf('}'));
                 string name = content.Substring(0, content.IndexOf('{')).Trim();
                 string enumContent = content.Substring(content.IndexOf('{') + 1);
-                string[] lines = enumContent.Split('\n');
                 var @enum = new DB.Enum();
                 foreach(string enumDecl in enumContent.Split(','))
                 {
