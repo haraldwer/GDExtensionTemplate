@@ -10,6 +10,17 @@ namespace godot
     {
 
         REG_CLASS()
+
+        REG_ENUM()
+        enum MyEnum
+        {
+	        A = 1,
+            B = 2,
+            C,
+            D,
+            E = 10,
+            F,
+        };
     
     public:
 

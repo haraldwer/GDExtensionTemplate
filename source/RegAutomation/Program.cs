@@ -89,6 +89,7 @@ namespace RegAutomation
             {
                 Pattern_Class.Process(t);
                 Pattern_Function.Process(t);
+                Pattern_Enum.Process(t);
                 Pattern_Property.Process(t);
             });
         }
@@ -112,6 +113,7 @@ namespace RegAutomation
                 
                 Pattern_Class.Generate(type, ref content, ref inject);
                 Pattern_Function.Generate(type, ref content, ref inject);
+                Pattern_Enum.Generate(type, ref content, ref inject);
                 Pattern_Property.Generate(type, ref content, ref inject);
 
                 inject = inject.Replace("\n", "\\\n");

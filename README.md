@@ -28,6 +28,7 @@ Here is how to use them:
  * ``REG_CLASS()`` - Use this macro instead of GDCLASS().
  * ``REG_FUNCTION()`` - Put this in front of your function.
  * ``REG_PROPERTY()`` - Put this in front of your property. Supports ``PropertyInfo`` meta parameters.
+ * ``REG_ENUM()`` - Put this in front of your enum.
 
 There is an example class called GDExample that you can use for reference. 
 Registration-code will be injected into ``extension.cpp``. Class bindings will be generated based on ``reg_class.template``. 

@@ -8,6 +8,14 @@ func _ready():
 	print("Am I angry: " + str(is_angry()))
 	print("Am I happy: " + str(is_happy()))
 	print(GDExample.multiply(5, 7))
+	print("Printing MyEnum")
+	print(GDExample.A)
+	print(GDExample.B)
+	print(GDExample.C)
+	print(GDExample.D)
+	print(GDExample.E)
+	print(GDExample.F)
+	print("End Printing MyEnum")
 	pass # Replace with function body.
 
 
