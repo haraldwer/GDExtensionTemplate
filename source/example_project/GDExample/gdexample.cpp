@@ -13,3 +13,8 @@ void GDExample::set_var(int var)
     printf("Var: %i\n", var);
 }
 
+double GDExample::multiply(double x, double y)
+{
+    return x * y;
+}
+

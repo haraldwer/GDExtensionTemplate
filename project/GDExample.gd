@@ -7,6 +7,7 @@ func _ready():
 	set_angry(false)
 	print("Am I angry: " + str(is_angry()))
 	print("Am I happy: " + str(is_happy()))
+	print(GDExample.multiply(5, 7))
 	pass # Replace with function body.
 
 
