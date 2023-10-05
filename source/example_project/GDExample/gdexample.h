@@ -21,6 +21,12 @@ namespace godot
         
         REG_PROPERTY(PROPERTY_HINT_RANGE, "0,20,0.01")
         float property = 0;
+
+        REG_PROPERTY()
+    	bool is_happy;
+
+        REG_PROPERTY()
+    	bool angry;
         
     private:
         

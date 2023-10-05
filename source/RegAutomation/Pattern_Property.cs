@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using static RegAutomation.DB;
 
 namespace RegAutomation
 {
@@ -62,24 +63,46 @@ namespace RegAutomation
                     propertyBindings += ", " + func.Value.Meta;
                 // TODO: Meta!
                 // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
-                
+
+                var (getterBindName, setterBindName) = GetGetterSetterBindName(variant, func.Key);
+
                 propertyBindings += "), ";
-                propertyBindings += "\"set_" + func.Key + "\", ";
-                propertyBindings += "\"get_" + func.Key + "\");\n\t\t";
+                propertyBindings += $"\"{setterBindName}\", ";
+                propertyBindings += $"\"{getterBindName}\");\n\t\t";
 
                 // Function generation
                 inject += "\t" + func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; }\n";
                 inject += "\tvoid set_" + func.Key + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n";
-                
+
                 // Function bindings
-                functionBindings += "ClassDB::bind_method(D_METHOD(\"get_" + func.Key + "\"), ";
+                // The auto-generated C++ getters and setters still use the get_/set_ prefixes to avoid name collision.
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{getterBindName}\"), ";
                 functionBindings += "&" + type.Value.Name + "::get_" + func.Key + ");\n\t";
-                functionBindings += "ClassDB::bind_method(D_METHOD(\"set_" + func.Key + "\", \"p\"), ";
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{setterBindName}\", \"p\"), ";
                 functionBindings += "&" + type.Value.Name + "::set_" + func.Key + ");\n\t"; 
             }
 
             content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
             content = content.Replace("REG_BIND_PROPERTY_FUNCTIONS", functionBindings);
+        }
+
+        private static (string getterBindName, string setterBindName) GetGetterSetterBindName(string variantName, string propertyName)
+        {
+            // Rename binding name for booleans so it's consistent with GDScript conventions
+            string getterBindName;
+            bool isBool = variantName == "BOOL";
+            if(isBool && propertyName.StartsWith("is_")) 
+                propertyName = propertyName.Remove(0, 3);
+            if (isBool)
+            {
+                getterBindName = "is_" + propertyName;
+            }
+            else
+            {
+                getterBindName = "get_" + propertyName;
+            }
+            string setterBindName = "set_" + propertyName;
+            return (getterBindName, setterBindName);
         }
     }
 }
