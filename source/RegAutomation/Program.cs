@@ -112,6 +112,7 @@ namespace RegAutomation
                 string content = template;
                 content = content.Replace("REG_CLASS_NAME", type.Value.Name);
                 
+                Pattern_Comment.Generate(type, ref content, ref inject);
                 Pattern_Class.Generate(type, ref content, ref inject);
                 Pattern_Function.Generate(type, ref content, ref inject);
                 Pattern_Enum.Generate(type, ref content, ref inject);

@@ -58,5 +58,10 @@ namespace RegAutomation
 
             type.Value.Content = result.ToString();
         }
+
+        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
+        {
+            // TODO: Inject comments as documentation
+        }
     }
 }
