@@ -28,6 +28,7 @@ namespace RegAutomation
         {
             public string Name = "";
             public string Content = "";
+            public string ParentName = "";
             
             public Dictionary<string, Func> Functions = new Dictionary<string, Func>();
             public Dictionary<string, Prop> Properties = new Dictionary<string, Prop>();
