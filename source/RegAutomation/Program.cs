@@ -87,6 +87,7 @@ namespace RegAutomation
         {
             ThreadedIter(t =>
             {
+                Pattern_Comment.Process(t);
                 Pattern_Class.Process(t);
                 Pattern_Function.Process(t);
                 Pattern_Enum.Process(t);

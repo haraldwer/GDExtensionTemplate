@@ -45,6 +45,7 @@
     <Compile Include="Database.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Pattern_Class.cs" />
+    <Compile Include="Pattern_Comment.cs" />
     <Compile Include="Pattern_Enum.cs" />
     <Compile Include="Pattern_Function.cs" />
     <Compile Include="Pattern_Property.cs" />
