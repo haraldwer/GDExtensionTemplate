@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Pattern_Class.cs" />
     <Compile Include="Pattern_Comment.cs" />

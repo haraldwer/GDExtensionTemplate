@@ -25,15 +25,10 @@ namespace RegAutomation
                 string[] tokens = func.Split(' ');
                 // The last token is always the function name
                 string name = tokens[tokens.Length - 1];
-                bool isStatic = false;
 
                 // TODO: Virtual
                 // Use Contains here because static could be before or after the return type
-                if (tokens.Contains("static"))
-                {
-                    isStatic = true;
-                    Console.WriteLine("Registered as static");
-                }
+                bool isStatic = tokens.Contains("static");
                 
                 int paramIndex = content.IndexOf('(') + 1;
                 int paramEndIndex = content.LastIndexOf(')');

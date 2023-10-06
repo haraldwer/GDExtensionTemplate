@@ -7,7 +7,7 @@ namespace RegAutomation
 {
     internal class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             if (args.Length != 0)
                 Directory.SetCurrentDirectory(args[0]);
@@ -25,8 +25,17 @@ namespace RegAutomation
                     continue;
                 ProcessProject(dir);
             }
+
+            if (!ErrorHandler.IsSuccess())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("RegAutomation finished - Errors detected!");
+                Console.ForegroundColor = ConsoleColor.White;
+                return -1;
+            }
             
-            Console.WriteLine("Finished");
+            Console.WriteLine("RegAutomation finished");
+            return 0;
         }
 
         static void ProcessProject(string directory)
@@ -58,7 +67,7 @@ namespace RegAutomation
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                ErrorHandler.HandleError($"Clean failed", e, false);
             }
         }
 
@@ -87,11 +96,18 @@ namespace RegAutomation
         {
             ThreadedIter(t =>
             {
-                Pattern_Comment.Process(t);
-                Pattern_Class.Process(t);
-                Pattern_Function.Process(t);
-                Pattern_Enum.Process(t);
-                Pattern_Property.Process(t);
+                try
+                {
+                    Pattern_Comment.Process(t);
+                    Pattern_Class.Process(t);
+                    Pattern_Function.Process(t);
+                    Pattern_Enum.Process(t);
+                    Pattern_Property.Process(t);
+                }
+                catch (Exception e)
+                {
+                    ErrorHandler.HandleError($"Failed to process {t.Key}", e);
+                }
             });
         }
         
@@ -105,37 +121,51 @@ namespace RegAutomation
             
             ThreadedIter(type =>
             {
-                if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
-                    return;
+                try
+                {
+                    if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
+                        return;
 
-                string inject = "#define REG_CLASS() \n";
-                string content = template;
-                content = content.Replace("REG_CLASS_NAME", type.Value.Name);
+                    string inject = "#define REG_CLASS() \n";
+                    string content = template;
+                    content = content.Replace("REG_CLASS_NAME", type.Value.Name);
                 
-                Pattern_Comment.Generate(type, ref content, ref inject);
-                Pattern_Class.Generate(type, ref content, ref inject);
-                Pattern_Function.Generate(type, ref content, ref inject);
-                Pattern_Enum.Generate(type, ref content, ref inject);
-                Pattern_Property.Generate(type, ref content, ref inject);
+                    Pattern_Comment.Generate(type, ref content, ref inject);
+                    Pattern_Class.Generate(type, ref content, ref inject);
+                    Pattern_Function.Generate(type, ref content, ref inject);
+                    Pattern_Enum.Generate(type, ref content, ref inject);
+                    Pattern_Property.Generate(type, ref content, ref inject);
 
-                inject = inject.Replace("\n", "\\\n");
-                inject += "private: ";
+                    inject = inject.Replace("\n", "\\\n");
+                    inject += "private: ";
                 
-                content = content.Replace("REG_INJECT", inject);
+                    content = content.Replace("REG_INJECT", inject);
                 
-                // Write to file
-                string contentFile = type.Value.Name + ".generated.h";
-                GenerateFile(contentFile, content);
+                    // Write to file
+                    string contentFile = type.Value.Name + ".generated.h";
+                    GenerateFile(contentFile, content);
+                }
+                catch (Exception e)
+                {
+                    ErrorHandler.HandleError($"Failed to generate {type.Key}", e);
+                }
             });
         }
         
         static void GenerateRegister()
         {
-            // Create reg and include code
-            GenerateFile("reg_incl.generated.h", Pattern_Class.GetIncl());
-            GenerateFile("reg_init.generated.h", Pattern_Class.GetReg());
-            GenerateFile("reg_deinit.generated.h", "");
-            File.SetLastWriteTime("extension.cpp", DateTime.Now);
+            try
+            {
+                // Create reg and include code
+                GenerateFile("reg_incl.generated.h", Pattern_Class.GetIncl());
+                GenerateFile("reg_init.generated.h", Pattern_Class.GetReg());
+                GenerateFile("reg_deinit.generated.h", "");
+                File.SetLastWriteTime("extension.cpp", DateTime.Now);
+            }
+            catch (Exception e)
+            {
+                ErrorHandler.HandleError($"Failed to generate register", e);
+            }
         }
 
         static void GenerateFile(string name, string content, bool gen = true)
