@@ -23,10 +23,21 @@ namespace RegAutomation
                     continue;
 
                 string classDef = search.Substring(classFind + "class ".Length);
-                string nameEnd = classDef.Substring(0, classDef.IndexOf(':')).Trim();
+                // TODO: Error handling when trying to register a class that doesn't (directly or indirectly) inherit from godot::Object (not supported)
+                // TODO: Detect multiple inheritance (not supported) and throw an exception accordingly
+                int indexOfColon = classDef.IndexOf(':');
+                string nameEnd = classDef.Substring(0, indexOfColon).Trim();
                 Console.WriteLine("Name: " + nameEnd);
-                type.Value.Name = nameEnd; 
-                
+                type.Value.Name = nameEnd;
+                string inheritance = classDef.Substring(indexOfColon + 1);
+                string[] tokens = inheritance.Substring(0, inheritance.IndexOf('{'))
+                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                // Assuming no multiple inheritance (not supported anyway), the last space-separated token is the parent class name
+                // Access modifiers like public/protected might appear ebfore the parent class name
+                // No need to trim here because we already split on whitespaces
+                string parentName = tokens[tokens.Length - 1];
+                Console.WriteLine("Inherits from: " + parentName);
+                type.Value.ParentName = parentName;
                 
                 //int startIndex = match.Index + match.Value.Length + 1;
                 //string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
@@ -39,7 +50,7 @@ namespace RegAutomation
         {
             content = content.Replace("REG_INCLUDE", "#include \"" + type.Key + "\"");
 
-            inject += "\tGDCLASS(" + type.Value.Name + ", Node3D)\n";
+            inject += $"\tGDCLASS({type.Value.Name}, {type.Value.ParentName})\n";
             inject += "protected: \n";
             inject += "\tstatic void _bind_methods();\n";
         }
