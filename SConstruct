@@ -31,8 +31,6 @@ for subdir in subdirs :
 # Add project includes
 env.Append(INCLUDE="source");
 
-print(env.Dump())
-
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "project/bin/libgdexample.{}.{}.framework/libgdexample.{}.{}".format(
