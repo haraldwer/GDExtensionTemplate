@@ -27,7 +27,6 @@ namespace RegAutomation
                 // TODO: Detect multiple inheritance (not supported) and throw an exception accordingly
                 int indexOfColon = classDef.IndexOf(':');
                 string nameEnd = classDef.Substring(0, indexOfColon).Trim();
-                Console.WriteLine("Name: " + nameEnd);
                 type.Value.Name = nameEnd;
                 string inheritance = classDef.Substring(indexOfColon + 1);
                 string[] tokens = inheritance.Substring(0, inheritance.IndexOf('{'))
@@ -36,7 +35,6 @@ namespace RegAutomation
                 // Access modifiers like public/protected might appear before the parent class name
                 // No need to trim here because we already split on whitespaces
                 string parentName = tokens[tokens.Length - 1];
-                Console.WriteLine("Inherits from: " + parentName);
                 type.Value.ParentName = parentName;
                 
                 //int startIndex = match.Index + match.Value.Length + 1;

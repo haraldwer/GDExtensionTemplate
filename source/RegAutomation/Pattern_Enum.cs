@@ -23,7 +23,6 @@ namespace RegAutomation
                 string decl = content.Substring(0, content.IndexOf('{'));
                 // Skip "enum " if not anonymous enum, otherwise use "" as name
                 string name = decl.Contains("enum ") ? decl.Substring(decl.IndexOf("enum ") + 5).Trim() : "";
-                Console.WriteLine($"Enum Name: {name}");
                 string enumContent = content.Substring(content.IndexOf('{') + 1);
                 var @enum = new DB.Enum();
                 foreach(string enumDecl in enumContent.Split(','))
