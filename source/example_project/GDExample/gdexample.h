@@ -16,10 +16,10 @@ namespace godot
         {
 	        A = 1,
             B = 2,
-            C,
-            D,
+            C, // implicit 3
+            D, // implicit 4
             E = 10,
-            F,
+            F, // implicit 11
         };
     
     public:
@@ -40,6 +40,9 @@ namespace godot
     	bool is_happy;
 
         REG_PROPERTY()
+        /*
+         * (TEST COMMENT)
+         */
     	bool angry;
         
     private:
