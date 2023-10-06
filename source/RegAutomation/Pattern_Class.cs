@@ -60,7 +60,7 @@ namespace RegAutomation
             string reg = "";
             foreach (var type in DB.Types)
                 if (type.Value.Name != "")
-                    reg += "ClassDB::register_class<" + type.Value.Name + ">();\n";
+                    reg += $"ClassDB::register_class<{type.Value.Name}>();\n";
             return reg; 
         }
 
@@ -69,7 +69,7 @@ namespace RegAutomation
             string include = "";
             foreach (var type in DB.Types)
                 if (type.Value.Name != "")
-                    include += "#include \".generated/" + type.Value.Name + ".generated.h\"\n";
+                    include += $"#include \".generated/{type.Value.Name}.generated.h\"\n";
             return include;
         }
     }

@@ -54,20 +54,14 @@ namespace RegAutomation
                 }
                 
                 // Property bindings
-                propertyBindings += "ClassDB::add_property(\"" + type.Value.Name + "\", ";
-                propertyBindings += "PropertyInfo(Variant::" + variant + ", ";
-                propertyBindings += "\"" + func.Key + "\"";
-
-                if (func.Value.Meta != "")
-                    propertyBindings += ", " + func.Value.Meta;
-                // TODO: Meta!
-                // ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "speed", PROPERTY_HINT_RANGE, "0,20,0.01"), "set_speed", "get_speed");
-
-                var (getterBindName, setterBindName) = GetGetterSetterBindName(variant, func.Key);
-
-                propertyBindings += "), ";
-                propertyBindings += $"\"{setterBindName}\", ";
-                propertyBindings += $"\"{getterBindName}\");\n\t\t";
+                propertyBindings += $"ClassDB::add_property(\"{type.Value.Name}\", ";
+                string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}"; 
+                propertyBindings += $"PropertyInfo(Variant::{variant}, \"{func.Key}\"{meta}), ";
+                
+                string getPrefix = GetGetterPrefix(variant, func.Key);
+                string setPrefix = GetSetterPrefix(variant, func.Key);
+                propertyBindings += $"\"{setPrefix}{func.Key}\", ";
+                propertyBindings += $"\"{getPrefix}{func.Key}\");\n\t\t";
 
                 // Function generation
                 inject += "\t" + func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; }\n";
@@ -75,33 +69,29 @@ namespace RegAutomation
 
                 // Function bindings
                 // The auto-generated C++ getters and setters still use the get_/set_ prefixes to avoid name collision.
-                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{getterBindName}\"), ";
-                functionBindings += "&" + type.Value.Name + "::get_" + func.Key + ");\n\t";
-                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{setterBindName}\", \"p\"), ";
-                functionBindings += "&" + type.Value.Name + "::set_" + func.Key + ");\n\t"; 
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{getPrefix}\"), ";
+                functionBindings += $"&{type.Value.Name}::get_{func.Key});\n\t";
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{setPrefix}\", \"p\"), ";
+                functionBindings += $"&{type.Value.Name}::set_{func.Key});\n\t"; 
             }
 
             content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
             content = content.Replace("REG_BIND_PROPERTY_FUNCTIONS", functionBindings);
         }
 
-        private static (string getterBindName, string setterBindName) GetGetterSetterBindName(string variantName, string propertyName)
+        private static string GetGetterPrefix(string variant, string property)
         {
-            // Rename binding name for booleans so it's consistent with GDScript conventions
-            string getterBindName;
-            bool isBool = variantName == "BOOL";
-            if(isBool && propertyName.StartsWith("is_")) 
-                propertyName = propertyName.Remove(0, 3);
-            if (isBool)
+            switch (variant)
             {
-                getterBindName = "is_" + propertyName;
+                case "BOOL":
+                    return property.StartsWith("is_") ? "" : "is_";
             }
-            else
-            {
-                getterBindName = "get_" + propertyName;
-            }
-            string setterBindName = "set_" + propertyName;
-            return (getterBindName, setterBindName);
+            return "get_";
+        }
+
+        private static string GetSetterPrefix(string variant, string property)
+        {
+            return "set_";
         }
     }
 }
