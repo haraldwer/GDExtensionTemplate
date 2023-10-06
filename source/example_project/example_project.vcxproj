@@ -12,9 +12,11 @@
   <ItemGroup>
     <ClCompile Include="extension.cpp" />
     <ClCompile Include="GDExample\gdexample.cpp" />
+    <ClCompile Include="GDExample\gdinheritanceexample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GDExample\gdexample.h" />
+    <ClInclude Include="GDExample\gdinheritanceexample.h" />
     <ClInclude Include="registration.h" />
     <ClInclude Include="extension.h" />
   </ItemGroup>

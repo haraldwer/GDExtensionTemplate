@@ -11,3 +11,6 @@ script = ExtResource("1_5go6h")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.09969)
+
+[node name="GDInheritanceExample" type="GDInheritanceExample" parent="."]
+angry = false

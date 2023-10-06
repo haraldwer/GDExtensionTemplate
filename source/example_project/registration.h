@@ -3,7 +3,7 @@
 // Use these macros to automate registration
 
 /**
- * Replace GDCLASS(name, parent) with #include REG_CLASS(name)
+ * Replace GDCLASS(name, parent) with #include REG_CLASS()
  */
 #define REG_CLASS(...) 
 
