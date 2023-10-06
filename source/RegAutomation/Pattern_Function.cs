@@ -57,7 +57,7 @@ namespace RegAutomation
                 foreach (var param in func.Value.Params)
                     if (param != "")
                         bindings.Append($", \"{param}\"");
-                bindings.Append($"), &{type.Value.Name}::{func.Key});\n\t\t");
+                bindings.Append($"), &{type.Value.Name}::{func.Key});\n\t");
             }
             content = content.Replace("REG_BIND_FUNCTIONS", bindings.ToString());
         }

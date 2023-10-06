@@ -37,7 +37,7 @@ namespace godot
         float property = 0;
 
         REG_PROPERTY()
-    	bool is_happy;
+    	bool is_happy; 
 
         REG_PROPERTY()
         /*

@@ -60,7 +60,7 @@ namespace RegAutomation
             {
                 foreach(var(constantName, constantValue) in @enum.Value.KeyValues)
                 {
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Value.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n");
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Value.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n\t");
                 }
             }
             content = content.Replace("REG_BIND_ENUMS", bindings.ToString());

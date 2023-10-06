@@ -58,40 +58,38 @@ namespace RegAutomation
                 string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}"; 
                 propertyBindings += $"PropertyInfo(Variant::{variant}, \"{func.Key}\"{meta}), ";
                 
-                string getPrefix = GetGetterPrefix(variant, func.Key);
-                string setPrefix = GetSetterPrefix(variant, func.Key);
-                propertyBindings += $"\"{setPrefix}{func.Key}\", ";
-                propertyBindings += $"\"{getPrefix}{func.Key}\");\n\t\t";
+                var (get, set) = GetGetterSetter(variant, func.Key);
+                propertyBindings += $"\"{set}\", ";
+                propertyBindings += $"\"{get}\");\n\t";
 
                 // Function generation
-                inject += "\t" + func.Value.Type + " get_" + func.Key + "() const { return " + func.Key + "; }\n";
-                inject += "\tvoid set_" + func.Key + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n";
+                inject += "\t" + func.Value.Type + " _gen_" + get + "() const { return " + func.Key + "; }\n";
+                inject += "\tvoid _gen_" + set + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n";
 
                 // Function bindings
                 // The auto-generated C++ getters and setters still use the get_/set_ prefixes to avoid name collision.
-                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{getPrefix}\"), ";
-                functionBindings += $"&{type.Value.Name}::get_{func.Key});\n\t";
-                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{setPrefix}\", \"p\"), ";
-                functionBindings += $"&{type.Value.Name}::set_{func.Key});\n\t"; 
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{get}\"), ";
+                functionBindings += $"&{type.Value.Name}::_gen_{get});\n\t";
+                functionBindings += $"ClassDB::bind_method(D_METHOD(\"{set}\", \"p\"), ";
+                functionBindings += $"&{type.Value.Name}::_gen_{set});\n\t";
             }
 
             content = content.Replace("REG_BIND_PROPERTIES", propertyBindings);
             content = content.Replace("REG_BIND_PROPERTY_FUNCTIONS", functionBindings);
         }
 
-        private static string GetGetterPrefix(string variant, string property)
+        private static (string get, string set) GetGetterSetter(string variant, string property)
         {
             switch (variant)
             {
                 case "BOOL":
-                    return property.StartsWith("is_") ? "" : "is_";
+                {
+                    if (property.StartsWith("is_"))
+                        property = property.Substring(3);
+                    return ("is_" + property, "set_" + property);
+                }
             }
-            return "get_";
-        }
-
-        private static string GetSetterPrefix(string variant, string property)
-        {
-            return "set_";
+            return ("get_" + property, "set_" + property);
         }
     }
 }
