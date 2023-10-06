@@ -33,7 +33,7 @@ namespace RegAutomation
                 string[] tokens = inheritance.Substring(0, inheritance.IndexOf('{'))
                     .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 // Assuming no multiple inheritance (not supported anyway), the last space-separated token is the parent class name
-                // Access modifiers like public/protected might appear ebfore the parent class name
+                // Access modifiers like public/protected might appear before the parent class name
                 // No need to trim here because we already split on whitespaces
                 string parentName = tokens[tokens.Length - 1];
                 Console.WriteLine("Inherits from: " + parentName);
