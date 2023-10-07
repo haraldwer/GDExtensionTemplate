@@ -27,7 +27,6 @@ namespace RegAutomation
                     continue;
                 var classClosure = FindClosure(header.Value.Content, searchStartIndex + classFind);
                 string classContent = header.Value.Content.Substring(classClosure.Item1, classClosure.Item2 - classClosure.Item1);
-                //Console.WriteLine($"Class Closure: {classContent}");
                 searchStartIndex = match.Index; // Start searching from the previous REG_CLASS, so multiple classes in same file is possible
                 int lineNumber = newlineIndices.BinarySearch(match.Index);
                 if(lineNumber < 0)
@@ -42,14 +41,12 @@ namespace RegAutomation
                 // TODO: Detect multiple inheritance (not supported) and throw an exception accordingly
                 int indexOfColon = classDef.IndexOf(':');
                 string nameEnd = classDef.Substring(0, indexOfColon).Trim();
-                Console.WriteLine("Name: " + nameEnd);
                 string inheritance = classDef.Substring(indexOfColon + 1);
                 string[] tokens = inheritance.Substring(0, inheritance.IndexOf('{'))
                     .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 // Assuming no multiple inheritance (not supported anyway), the last space-separated token is the parent class name
                 // Access modifiers like public/protected might appear before the parent class name
                 string parentName = tokens[tokens.Length - 1].Trim();
-                Console.WriteLine("Inherits from: " + parentName);
                 //int startIndex = match.Index + match.Value.Length + 1;
                 //string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
                 //string name = sub.Substring(0, sub.IndexOf(')'));
