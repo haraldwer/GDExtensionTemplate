@@ -39,7 +39,7 @@
  */
 #define REG_SIGNAL()
 
-#define REG_CLASS_MACRO_IMPL
+// This is used to REG_CLASS() to REG_CLASS<line number>()
 #define REG_CLASS_INTERNAL_HIDE(x)
 #define REG_CLASS_INTERNAL_CONCAT(x) REG_CLASS ## x()
 #define REG_CLASS_INTERNAL(x) REG_CLASS_INTERNAL_CONCAT(x)
