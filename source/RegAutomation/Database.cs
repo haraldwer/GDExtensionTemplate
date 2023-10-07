@@ -38,6 +38,7 @@ namespace RegAutomation
 
         public class Header
         {
+            public string IncludeName = ""; // The corresponding generated header's name
             public string Content = "";
             public List<Type> Types = new List<Type>();
         }
@@ -61,6 +62,7 @@ namespace RegAutomation
                     continue;
                 Headers[file] = new Header
                 {
+                    IncludeName = file.Substring(Directory.GetCurrentDirectory().Length + 1).Replace('\\', '.'),
                     Content = content
                 };
             }

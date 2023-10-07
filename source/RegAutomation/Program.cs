@@ -160,7 +160,7 @@ namespace RegAutomation
                     content = content.Replace("REG_INJECT", injects.ToString());
                     content = content.Replace("REG_BIND_CLASS_METHODS", bindClassMethods.ToString());
                     // Write to file
-                    string contentFile = header.Key.Replace('\\', '_').Replace(':', '_') + ".generated.h";
+                    string contentFile = header.Value.IncludeName + ".generated.h";
                     GenerateFile(contentFile, content);
                 }
                 catch (Exception e)

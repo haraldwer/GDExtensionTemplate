@@ -97,7 +97,7 @@ namespace RegAutomation
             string include = "";
             foreach (var header in DB.Headers)
                 if (header.Value.Types.Count > 0)
-                    include += $"#include \".generated/{header.Key.Replace('\\', '_').Replace(':', '_')}.generated.h\"\n";
+                    include += $"#include \".generated/{header.Value.IncludeName}.generated.h\"\n";
             return include;
         }
 
