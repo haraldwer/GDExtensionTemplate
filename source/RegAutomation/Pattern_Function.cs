@@ -9,7 +9,7 @@ namespace RegAutomation
 {
     public class Pattern_Function : Pattern
     {
-        public static void Process(DB.Type type)
+        public static void ProcessType(DB.Type type)
         {
             MatchCollection matches = FindMatches(type.Content, "REG_FUNCTION");
             if (matches == null)
@@ -56,7 +56,7 @@ namespace RegAutomation
                 foreach (var param in func.Value.Params)
                     if (param != "")
                         bindings.Append($", \"{param}\"");
-                bindings.Append($"), &{type.Name}::{func.Key});\n\t\t");
+                bindings.Append($"), &{type.Name}::{func.Key});\n\t");
             }
         }
     }

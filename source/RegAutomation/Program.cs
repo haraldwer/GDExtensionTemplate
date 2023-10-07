@@ -99,13 +99,16 @@ namespace RegAutomation
             {
                 try
                 {
-                    Pattern_Comment.Process(h);
-                    Pattern_Class.Process(h);
+                    // Headers
+                    Pattern_Comment.ProcessHeader(h);
+                    Pattern_Class.ProcessHeader(h);
+                    
+                    // Types
                     foreach (var t in h.Value.Types)
                     {
-                        Pattern_Function.Process(t);
-                        Pattern_Enum.Process(t);
-                        Pattern_Property.Process(t);
+                        Pattern_Function.ProcessType(t);
+                        Pattern_Enum.ProcessType(t);
+                        Pattern_Property.ProcessType(t);
                     }
                 }
                 catch (Exception e)
@@ -129,17 +132,20 @@ namespace RegAutomation
                 {
                     if (header.Key == "" || header.Value.Types.Count == 0 || header.Value.Content == "")
                         return;
+                    
                     string content = template;
                     Pattern_Class.GenerateIncludes(header, ref content);
+                    
                     StringBuilder bindClassMethods = new StringBuilder();
                     StringBuilder injects = new StringBuilder();
                     StringBuilder undefs = new StringBuilder();
                     foreach(var type in header.Value.Types)
                     {
-                        string inject = $"#define REG_CLASS{type.RegClassLineNumber}() \n";
+                        string inject = $"#define REG_CLASS_LINE_{type.RegClassLineNumber}() \n";
                         StringBuilder bindings = new StringBuilder();
-                        Pattern_Class.Generate(type, ref content, ref inject);
-                        Pattern_Comment.Generate(type, ref content, ref inject);
+                        
+                        Pattern_Class.GenerateInject(type, ref inject);
+                        
                         Pattern_Function.GenerateBindings(type, bindings);
                         Pattern_Enum.GenerateBindings(type, bindings);
                         Pattern_Property.GenerateBindings(type, bindings, ref inject);
@@ -148,17 +154,17 @@ namespace RegAutomation
                         inject += "private: \n";
                         injects.Append(inject);
 
-                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{\n{bindings}}}\n";
+                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{\n\t{bindings}\n}}\n\n";
                         bindClassMethods.Append(bindMethod);
 
-                        string undef = $"#undef REG_CLASS{type.RegClassLineNumber}\n";
+                        string undef = $"#undef REG_CLASS_LINE_{type.RegClassLineNumber}\n";
                         undefs.Append(undef);
-
                     }
 
                     content = content.Replace("REG_UNDEF", undefs.ToString());
                     content = content.Replace("REG_INJECT", injects.ToString());
                     content = content.Replace("REG_BIND_CLASS_METHODS", bindClassMethods.ToString());
+                    
                     // Write to file
                     string contentFile = header.Value.IncludeName + ".generated.h";
                     GenerateFile(contentFile, content);
