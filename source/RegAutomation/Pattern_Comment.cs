@@ -5,9 +5,9 @@ namespace RegAutomation
 {
     public class Pattern_Comment : Pattern
     {
-        public static void Process(KeyValuePair<string, DB.Type> type)
+        public static void Process(KeyValuePair<string, DB.Header> header)
         {
-            string content = type.Value.Content;
+            string content = header.Value.Content;
             
             // Algorithm to remove [// ... \n) and [/* ... */] from content in linear time
             var result = new StringBuilder();
@@ -44,7 +44,11 @@ namespace RegAutomation
                     }
                     break;
                 case SCAN_STAR:
-                    if (content[i] == '*' && content[i + 1] == '/') 
+                    if (content[i] == '\n')
+                    {
+                        result.Append(content[i]); // Newlines should be preserved!
+                    }
+                    else if (content[i] == '*' && content[i + 1] == '/') 
                     { 
                         state = SCAN_BEGIN;
                         ++i; // Skip both tokens
@@ -56,10 +60,10 @@ namespace RegAutomation
             if (state == SCAN_BEGIN) 
                 result.Append(content[content.Length - 1]);
 
-            type.Value.Content = result.ToString();
+            header.Value.Content = result.ToString();
         }
 
-        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
+        public static void Generate(DB.Type type, ref string content, ref string inject)
         {
             // TODO: Inject comments as documentation
         }

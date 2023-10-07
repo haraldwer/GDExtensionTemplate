@@ -5,7 +5,7 @@
 /**
  * Replace GDCLASS(name, parent) with #include REG_CLASS()
  */
-#define REG_CLASS(...) 
+#define REG_CLASS(...) REG_CLASS_INTERNAL_HIDE(REG_CLASS_INTERNAL(__LINE__))
 
 /**
  * Usage:
@@ -38,3 +38,8 @@
  * TODO:
  */
 #define REG_SIGNAL()
+
+#define REG_CLASS_MACRO_IMPL
+#define REG_CLASS_INTERNAL_HIDE(x)
+#define REG_CLASS_INTERNAL_CONCAT(x) REG_CLASS ## x()
+#define REG_CLASS_INTERNAL(x) REG_CLASS_INTERNAL_CONCAT(x)

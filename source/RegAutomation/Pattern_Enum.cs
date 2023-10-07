@@ -8,17 +8,17 @@ namespace RegAutomation
 {
     public class Pattern_Enum : Pattern
     {
-        public static void Process(KeyValuePair<string, DB.Type> type)
+        public static void Process(DB.Type type)
         {
-            MatchCollection matches = FindMatches(type.Value.Content, "REG_ENUM");
+            MatchCollection matches = FindMatches(type.Content, "REG_ENUM");
             if (matches == null)
                 return;
 
             foreach (Match match in matches)
             {
-                Console.WriteLine("REG_ENUM: " + Path.GetFileName(type.Key));
+                Console.WriteLine("REG_ENUM: " + Path.GetFileName(type.FileName));
                 int startIndex = match.Value.Length + match.Index + 2;
-                string sub = type.Value.Content.Substring(startIndex, type.Value.Content.Length - startIndex);
+                string sub = type.Content.Substring(startIndex, type.Content.Length - startIndex);
                 string content = sub.Substring(0, sub.IndexOf('}'));
                 string decl = content.Substring(0, content.IndexOf('{'));
                 // Skip "enum " if not anonymous enum, otherwise use "" as name
@@ -48,22 +48,19 @@ namespace RegAutomation
                     }
                 }
                 
-                type.Value.Enums[name] = @enum;
+                type.Enums[name] = @enum;
             }
         }
 
-        public static void Generate(KeyValuePair<string, DB.Type> type, ref string content, ref string inject)
+        public static void GenerateBindings(DB.Type type, StringBuilder bindings)
         {
-            // ClassDB::bind_integer_constant("class", "enum", "constant", <int value>, <bool bitfield>)
-            var bindings = new StringBuilder();
-            foreach(var @enum in type.Value.Enums)
+            foreach (var @enum in type.Enums)
             {
-                foreach(var(constantName, constantValue) in @enum.Value.KeyValues)
+                foreach (var (constantName, constantValue) in @enum.Value.KeyValues)
                 {
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Value.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n\t");
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n");
                 }
             }
-            content = content.Replace("REG_BIND_ENUMS", bindings.ToString());
         }
     }
 }

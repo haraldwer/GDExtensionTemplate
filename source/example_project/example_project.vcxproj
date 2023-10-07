@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This vcxproj is based on the automatically generated one in the godot source project -->
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <!-- Configuration -->
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="editor|x64">
@@ -23,7 +22,6 @@
   <ItemGroup>
     <Content Include="reg_class.template" />
   </ItemGroup>
-
   <!-- Globals -->
   <PropertyGroup Label="Globals">
     <ProjectGuid>{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}</ProjectGuid>
@@ -32,14 +30,12 @@
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
   <!-- Using make -->
   <PropertyGroup Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-
   <!-- Import cpp symbols -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -47,31 +43,23 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  
   <PropertyGroup Label="UserMacros" />
-
   <!-- Make setup -->
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-
     <!-- The actual commands -->
     <NMakeBuildCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; build.bat</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; rebuild.bat</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>cmd /V /C &amp;&amp; cd $(SolutionDir) &amp;&amp; clean.bat</NMakeCleanCommandLine>
-
     <!-- Output -->
     <NMakeOutput>$(SolutionDir)..\run.exe</NMakeOutput>
-
     <!-- Temp files -->
     <OutDir>$(SolutionDir).temp\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir).temp\</IntDir>
-
     <!-- Preprocessor definitions -->
     <NMakePreprocessorDefinitions>TOOLS_ENABLED;DEBUG_ENABLED;NDEBUG;NO_EDITOR_SPLASH;WINDOWS_ENABLED;WASAPI_ENABLED;WINMIDI_ENABLED;TYPED_METHOD_BIND;WIN32;WINVER=0x0601;_WIN32_WINNT=0x0601;NOMINMAX;_WIN64;VULKAN_ENABLED;GLES3_ENABLED;_HAS_EXCEPTIONS=0;MINIZIP_ENABLED;BROTLI_ENABLED;CLIPPER2_ENABLED;ZSTD_STATIC_LINKING_ONLY;USE_VOLK;VK_USE_PLATFORM_WIN32_KHR;GLAD_ENABLED;EGL_ENABLED</NMakePreprocessorDefinitions>
-
     <!-- Includes -->
     <NMakeIncludeSearchPath>$(SolutionDir)\..\godot-cpp\include\;$(SolutionDir)\..\godot-cpp\gen\include\;$(SolutionDir)\..\godot-cpp\gdextension\</NMakeIncludeSearchPath>
-
     <!-- Misc-->
     <NMakeForcedIncludes>$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath>$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -83,7 +71,6 @@
     <NMakeOutput>$(SolutionDir)..\godot.exe</NMakeOutput>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDIr)</IncludePath>
   </PropertyGroup>
-  
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

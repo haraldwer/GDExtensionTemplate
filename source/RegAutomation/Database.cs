@@ -23,19 +23,26 @@ namespace RegAutomation
         {
             public List<(string, int)> KeyValues = new List<(string, int)>();
         }
-
         public class Type
         {
+            public string FileName = "";
             public string Name = "";
             public string Content = "";
             public string ParentName = "";
-            
+            public int RegClassLineNumber = 0;
+
             public Dictionary<string, Func> Functions = new Dictionary<string, Func>();
             public Dictionary<string, Prop> Properties = new Dictionary<string, Prop>();
             public Dictionary<string, Enum> Enums = new Dictionary<string, Enum>();
         }
+
+        public class Header
+        {
+            public string Content = "";
+            public List<Type> Types = new List<Type>();
+        }
         
-        public static Dictionary<string, Type> Types = new Dictionary<string, Type>();
+        public static Dictionary<string, Header> Headers = new Dictionary<string, Header>();
 
         public static void Load()
         {
@@ -52,7 +59,7 @@ namespace RegAutomation
                 string content = File.ReadAllText(file);
                 if (content == "")
                     continue;
-                Types[file] = new Type
+                Headers[file] = new Header
                 {
                     Content = content
                 };

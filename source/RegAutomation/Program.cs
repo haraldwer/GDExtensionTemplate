@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 namespace RegAutomation
@@ -71,22 +72,22 @@ namespace RegAutomation
             }
         }
 
-        static void ThreadedIter(Action<KeyValuePair<string, DB.Type>> action)
+        static void ThreadedIter(Action<KeyValuePair<string, DB.Header>> action)
         {
             using (ManualResetEvent resetEvent = new ManualResetEvent(false))
             {
-                int toProcess = DB.Types.Count;
-                foreach (KeyValuePair<string, DB.Type> type in DB.Types)
+                int toProcess = DB.Headers.Count;
+                foreach (KeyValuePair<string, DB.Header> header in DB.Headers)
                 {
                     ThreadPool.QueueUserWorkItem(x => {
                         
                         // Perform action
-                        action((KeyValuePair<string, DB.Type>)x); 
+                        action((KeyValuePair<string, DB.Header>)x); 
                         
                         // Safely decrement the counter
                         if (Interlocked.Decrement(ref toProcess)==0)
                             resetEvent.Set();
-                    }, type);
+                    }, header);
                 }
                 resetEvent.WaitOne();
             }
@@ -94,19 +95,22 @@ namespace RegAutomation
         
         static void Process()
         {
-            ThreadedIter(t =>
+            ThreadedIter(h =>
             {
                 try
                 {
-                    Pattern_Comment.Process(t);
-                    Pattern_Class.Process(t);
-                    Pattern_Function.Process(t);
-                    Pattern_Enum.Process(t);
-                    Pattern_Property.Process(t);
+                    Pattern_Comment.Process(h);
+                    Pattern_Class.Process(h);
+                    foreach (var t in h.Value.Types)
+                    {
+                        Pattern_Function.Process(t);
+                        Pattern_Enum.Process(t);
+                        Pattern_Property.Process(t);
+                    }
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler.HandleError($"Failed to process {t.Key}", e);
+                    ErrorHandler.HandleError($"Failed to process {h.Key}", e);
                 }
             });
         }
@@ -119,36 +123,51 @@ namespace RegAutomation
                 return;
             string template = File.ReadAllText(templatePath);
             
-            ThreadedIter(type =>
+            ThreadedIter(header =>
             {
                 try
                 {
-                    if (type.Key == "" || type.Value.Name == "" || type.Value.Content == "")
+                    if (header.Key == "" || header.Value.Types.Count == 0 || header.Value.Content == "")
                         return;
-
-                    string inject = "#define REG_CLASS() \n";
                     string content = template;
-                    content = content.Replace("REG_CLASS_NAME", type.Value.Name);
-                
-                    Pattern_Comment.Generate(type, ref content, ref inject);
-                    Pattern_Class.Generate(type, ref content, ref inject);
-                    Pattern_Function.Generate(type, ref content, ref inject);
-                    Pattern_Enum.Generate(type, ref content, ref inject);
-                    Pattern_Property.Generate(type, ref content, ref inject);
+                    Pattern_Class.GenerateIncludes(header.Value, ref content);
+                    StringBuilder bindClassMethods = new StringBuilder();
+                    StringBuilder injects = new StringBuilder();
+                    StringBuilder undefs = new StringBuilder();
+                    foreach(var type in header.Value.Types)
+                    {
+                        string inject = $"#define REG_CLASS{type.RegClassLineNumber}() \n";
+                        StringBuilder bindings = new StringBuilder();
+                        Pattern_Class.Generate(type, ref content, ref inject);
+                        Pattern_Comment.Generate(type, ref content, ref inject);
+                        Pattern_Function.GenerateBindings(type, bindings);
+                        Pattern_Enum.GenerateBindings(type, bindings);
+                        Pattern_Property.GenerateBindings(type, bindings, ref inject);
 
-                    inject = inject.Replace("\n", "\\\n");
-                    inject += "private: ";
-                
-                    content = content.Replace("REG_INJECT", inject);
-                
+                        inject = inject.Replace("\n", "\\\n");
+                        inject += "private: \n";
+                        injects.Append(inject);
+
+                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{{bindings}\n}}\n";
+                        bindClassMethods.Append(bindMethod);
+
+                        string undef = $"#undef REG_CLASS{type.RegClassLineNumber}";
+                        undefs.Append(undef);
+
+                    }
+
+                    content = content.Replace("REG_UNDEF", undefs.ToString());
+                    content = content.Replace("REG_INJECT", injects.ToString());
+                    content = content.Replace("REG_BIND_CLASS_METHODS", bindClassMethods.ToString());
                     // Write to file
-                    string contentFile = type.Value.Name + ".generated.h";
+                    string contentFile = header.Key.Replace('\\', '_').Replace(':', '_') + ".generated.h";
                     GenerateFile(contentFile, content);
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler.HandleError($"Failed to generate {type.Key}", e);
+                    ErrorHandler.HandleError($"Failed to generate {header.Key}", e);
                 }
+
             });
         }
         
