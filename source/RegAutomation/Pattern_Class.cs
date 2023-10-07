@@ -64,14 +64,9 @@ namespace RegAutomation
                 });
             }
         }
-        public static void GenerateIncludes(DB.Header header, ref string content)
+        public static void GenerateIncludes(KeyValuePair<string, DB.Header> header, ref string content)
         {
-            string includes = "";
-            foreach(var type in header.Types)
-            {
-                includes += $"#include \"{type.FileName}\"\n";
-            }
-            content = content.Replace("REG_INCLUDE", includes);
+            content = content.Replace("REG_INCLUDE", $"#include \"{header.Key}\"\n");
         }
         public static void Generate(DB.Type type, ref string content, ref string inject)
         {

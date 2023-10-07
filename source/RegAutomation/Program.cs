@@ -130,7 +130,7 @@ namespace RegAutomation
                     if (header.Key == "" || header.Value.Types.Count == 0 || header.Value.Content == "")
                         return;
                     string content = template;
-                    Pattern_Class.GenerateIncludes(header.Value, ref content);
+                    Pattern_Class.GenerateIncludes(header, ref content);
                     StringBuilder bindClassMethods = new StringBuilder();
                     StringBuilder injects = new StringBuilder();
                     StringBuilder undefs = new StringBuilder();
@@ -148,10 +148,10 @@ namespace RegAutomation
                         inject += "private: \n";
                         injects.Append(inject);
 
-                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{{bindings}\n}}\n";
+                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{\n{bindings}}}\n";
                         bindClassMethods.Append(bindMethod);
 
-                        string undef = $"#undef REG_CLASS{type.RegClassLineNumber}";
+                        string undef = $"#undef REG_CLASS{type.RegClassLineNumber}\n";
                         undefs.Append(undef);
 
                     }
