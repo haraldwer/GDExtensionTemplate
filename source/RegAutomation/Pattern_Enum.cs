@@ -38,9 +38,11 @@ namespace RegAutomation
             var @enum = new DB.Enum();
             foreach (string enumDecl in enumContent.Split(','))
             {
-                if (enumDecl.Trim().Length == 0) continue;
+                if (enumDecl.Trim().Length == 0) 
+                    continue;
                 string[] tokens = enumDecl.Split('=');
-                if (tokens.Length == 0) continue;
+                if (tokens.Length == 0) 
+                    continue;
                 @enum.Keys.Add(tokens[0].Trim());
             }
             @enum.IsBitField = asBitField;
