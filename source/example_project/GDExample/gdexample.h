@@ -55,7 +55,7 @@ namespace godot
 
         REG_CLASS()
 
-        REG_BITFIELD()
+        REG_ENUM(REG_P_Bitfield)
         enum Animals
         {
             Cat = 1,

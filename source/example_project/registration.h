@@ -33,10 +33,11 @@
 *	}
 */
 #define REG_ENUM(...)
-/**
- * Usage: Same as REG_ENUM
- */
-#define REG_BITFIELD(...)
+enum REG_ENUM_PROPERTIES
+{
+	// If passed into REG_ENUM, interpret the enum as a Godot bitfield.
+	REG_P_Bitfield,
+};
 
 /*
  * TODO:
