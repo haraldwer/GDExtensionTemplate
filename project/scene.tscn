@@ -13,5 +13,7 @@ script = ExtResource("1_5go6h")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.09969)
 
 [node name="GDInheritanceExample" type="GDInheritanceExample" parent="."]
-is_happy = false
-angry = false
+
+[node name="GDExample2" type="GDExample2" parent="."]
+
+[node name="GDExample3" type="GDExample3" parent="."]

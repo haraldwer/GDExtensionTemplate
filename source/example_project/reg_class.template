@@ -1,4 +1,5 @@
-
+#undef REG_CLASS_INTERNAL_HIDE
+#define REG_CLASS_INTERNAL_HIDE(x) x
 REG_INJECT
 
 #pragma once
@@ -9,10 +10,6 @@ REG_INCLUDE
 
 using namespace godot;
 
-void REG_CLASS_NAME::_bind_methods() 
-{
-    REG_BIND_FUNCTIONS
-    REG_BIND_PROPERTY_FUNCTIONS
-    REG_BIND_PROPERTIES
-    REG_BIND_ENUMS
-}
+REG_UNDEF
+
+REG_BIND_CLASS_METHODS

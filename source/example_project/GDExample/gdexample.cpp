@@ -18,3 +18,13 @@ double GDExample::multiply(double x, double y)
     return x * y;
 }
 
+void GDExample2::hello_world()
+{
+    printf("Hello world from GDExample2\n");
+}
+
+void GDExample3::hello_world()
+{
+    printf("Hello world from GDExample3\n");
+}
+

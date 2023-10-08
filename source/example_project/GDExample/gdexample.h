@@ -50,4 +50,50 @@ namespace godot
         double time_passed = 0;
 
     };
+    class GDExample2 : public Node
+    {
+
+        REG_CLASS()
+
+        REG_ENUM()
+        enum Animals
+        {
+            Cat,
+            Dog = 10,
+            Monkey = 17,
+            Giraffe = 20,
+        };
+
+        REG_PROPERTY()
+    	String string_prop = "hi!!!";
+
+    public:
+
+        REG_FUNCTION()
+        void hello_world();
+
+    };
+    class GDExample3 : public Node
+    {
+
+        REG_CLASS()
+
+
+        REG_PROPERTY()
+        int int_prop = 10;
+
+    public:
+        REG_ENUM()
+        enum Fruit
+        {
+            Apple = 17,
+            Orange = 10,
+            Pear = 0,
+            Grape = 78,
+        };
+
+        REG_FUNCTION()
+        void hello_world();
+
+    };
 }
