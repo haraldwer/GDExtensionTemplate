@@ -63,7 +63,7 @@ namespace RegAutomation
             header.Value.Content = result.ToString();
         }
 
-        public static void Generate(DB.Type type, ref string content, ref string inject)
+        public static void Generate(DB.Type type, StringBuilder inject)
         {
             // TODO: Inject comments as documentation
         }

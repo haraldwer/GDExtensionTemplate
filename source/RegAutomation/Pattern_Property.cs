@@ -40,7 +40,7 @@ namespace RegAutomation
             }
         }
 
-        public static void GenerateBindings(DB.Type type, StringBuilder bindings, ref string inject)
+        public static void GenerateBindings(DB.Type type, StringBuilder bindings, StringBuilder inject)
         {
             string propertyBindings = "";
             string functionBindings = "";
@@ -64,8 +64,8 @@ namespace RegAutomation
                 propertyBindings += $"\"{get}\");\n\t";
 
                 // Function generation
-                inject += "\t" + func.Value.Type + " _gen_" + get + "() const { return " + func.Key + "; }\n";
-                inject += "\tvoid _gen_" + set + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n";
+                inject.Append("\t" + func.Value.Type + " _gen_" + get + "() const { return " + func.Key + "; }\n");
+                inject.Append("\tvoid _gen_" + set + "(" + func.Value.Type + " p) { " + func.Key + " = p; }\n");
 
                 // Function bindings
                 // The auto-generated C++ getters and setters still use the get_/set_ prefixes to avoid name collision.

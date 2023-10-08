@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -130,22 +131,22 @@ namespace RegAutomation
                     if (header.Key == "" || header.Value.Types.Count == 0 || header.Value.Content == "")
                         return;
                     string content = template;
-                    Pattern_Class.GenerateIncludes(header, ref content);
+                    Pattern_Class.GenerateIncludes(header, out string includes);
                     StringBuilder bindClassMethods = new StringBuilder();
                     StringBuilder injects = new StringBuilder();
                     StringBuilder undefs = new StringBuilder();
                     foreach(var type in header.Value.Types)
                     {
-                        string inject = $"#define REG_CLASS{type.RegClassLineNumber}() \n";
+                        StringBuilder inject = new StringBuilder($"#define REG_CLASS{type.RegClassLineNumber}() \n");
                         StringBuilder bindings = new StringBuilder();
-                        Pattern_Class.Generate(type, ref content, ref inject);
-                        Pattern_Comment.Generate(type, ref content, ref inject);
+                        Pattern_Class.Generate(type, inject);
+                        Pattern_Comment.Generate(type, inject);
                         Pattern_Function.GenerateBindings(type, bindings);
                         Pattern_Enum.GenerateBindings(type, bindings);
-                        Pattern_Property.GenerateBindings(type, bindings, ref inject);
+                        Pattern_Property.GenerateBindings(type, bindings, inject);
 
                         inject = inject.Replace("\n", "\\\n");
-                        inject += "private: \n";
+                        inject.Append("private: \n");
                         injects.Append(inject);
 
                         string bindMethod = $"void {type.Name}::_bind_methods()\n{{\n{bindings}}}\n";
@@ -153,11 +154,11 @@ namespace RegAutomation
 
                         string undef = $"#undef REG_CLASS{type.RegClassLineNumber}\n";
                         undefs.Append(undef);
-
                     }
-
-                    content = content.Replace("REG_UNDEF", undefs.ToString());
+                    // Replace keywords in the template file here
+                    content = content.Replace("REG_INCLUDE", includes);
                     content = content.Replace("REG_INJECT", injects.ToString());
+                    content = content.Replace("REG_UNDEF", undefs.ToString());
                     content = content.Replace("REG_BIND_CLASS_METHODS", bindClassMethods.ToString());
                     // Write to file
                     string contentFile = header.Value.IncludeName + ".generated.h";
