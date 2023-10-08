@@ -13,7 +13,6 @@ namespace RegAutomation
             MatchCollection matches = FindMatches(type.Content, "REG_ENUM");
             if (matches == null)
                 return;
-
             foreach (Match match in matches)
             {
                 Console.WriteLine("REG_ENUM: " + Path.GetFileName(type.FileName));
@@ -25,29 +24,17 @@ namespace RegAutomation
                 string name = decl.Contains("enum ") ? decl.Substring(decl.IndexOf("enum ") + 5).Trim() : "";
                 string enumContent = content.Substring(content.IndexOf('{') + 1);
                 var @enum = new DB.Enum();
-                foreach(string enumDecl in enumContent.Split(','))
+                foreach (string enumDecl in enumContent.Split(','))
                 {
-                    if (enumDecl.Trim().Length == 0) continue;
+                    if (enumDecl.Trim().Length == 0)
+                        continue;
                     string[] tokens = enumDecl.Split('=');
-                    if (tokens.Length == 0) continue;
-                    else if(tokens.Length == 1)
-                    {
-                        if (@enum.KeyValues.Count == 0) 
-                        { 
-                            @enum.KeyValues.Add((tokens[0].Trim(), 0));
-                        }
-                        else 
-                        {
-                            var (_, previousNumbering) = @enum.KeyValues[@enum.KeyValues.Count - 1];
-                            @enum.KeyValues.Add((tokens[0].Trim(), previousNumbering + 1)); 
-                        }
-                    }
-                    else
-                    {
-                        @enum.KeyValues.Add((tokens[0].Trim(), int.Parse(tokens[1].Trim())));
-                    }
+                    if (tokens.Length == 0)
+                        continue;
+                    @enum.Keys.Add(tokens[0].Trim());
                 }
-                
+                Dictionary<string, string> metaProperties = FindMetaProperties(type.Content, match.Index);
+                @enum.IsBitField = metaProperties.ContainsKey("REG_P_Bitfield");
                 type.Enums[name] = @enum;
             }
         }
@@ -56,9 +43,10 @@ namespace RegAutomation
         {
             foreach (var @enum in type.Enums)
             {
-                foreach (var (constantName, constantValue) in @enum.Value.KeyValues)
+                string isBitFieldString = @enum.Value.IsBitField ? "true" : "false";
+                foreach (var constantName in @enum.Value.Keys)
                 {
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n\t");
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantName}, {isBitFieldString});\n");
                 }
             }
         }

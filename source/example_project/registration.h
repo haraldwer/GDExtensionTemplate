@@ -21,18 +21,23 @@
  */
 #define REG_PROPERTY(...)
 
- /**
-  * Usage:
-  * REG_ENUM()
-  * enum MyEnum
-  *	{
-  *		EntryA,
-  *		EntryB = 5,
-  *		EntryC,
-  *		EntryD = 15
-  *	}
-  */
+/**
+* Usage:
+* REG_ENUM()
+* enum MyEnum
+*	{
+*		EntryA,
+*		EntryB = 5,
+*		EntryC,
+*		EntryD = 15
+*	}
+*/
 #define REG_ENUM(...)
+enum REG_ENUM_PROPERTIES
+{
+	// If passed into REG_ENUM, interpret the enum as a Godot bitfield.
+	REG_P_Bitfield,
+};
 
 /*
  * TODO:

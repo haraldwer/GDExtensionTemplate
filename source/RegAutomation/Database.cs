@@ -21,7 +21,8 @@ namespace RegAutomation
 
         public class Enum
         {
-            public List<(string, int)> KeyValues = new List<(string, int)>();
+            public List<string> Keys = new List<string>();
+            public bool IsBitField = false;
         }
         public class Type
         {
