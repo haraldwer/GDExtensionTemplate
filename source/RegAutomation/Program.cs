@@ -135,23 +135,17 @@ namespace RegAutomation
                         return;
                     
                     string content = template;
-                    Pattern_Class.GenerateIncludes(header, out string includes);
-                    Pattern_Class.GenerateIncludes(header, ref content);
+                    Pattern_Class.GenerateIncludes(header, content, out string includes);
                     
                     StringBuilder bindClassMethods = new StringBuilder();
                     StringBuilder injects = new StringBuilder();
                     StringBuilder undefs = new StringBuilder();
                     foreach(var type in header.Value.Types)
                     {
-                        StringBuilder inject = new StringBuilder($"#define REG_CLASS{type.RegClassLineNumber}() \n");
+                        StringBuilder inject = new StringBuilder($"#define REG_CLASS_LINE_{type.RegClassLineNumber}() \n");
                         StringBuilder bindings = new StringBuilder();
-                        Pattern_Class.Generate(type, inject);
-                        Pattern_Comment.Generate(type, inject);
-                        string inject = $"#define REG_CLASS_LINE_{type.RegClassLineNumber}() \n";
-                        StringBuilder bindings = new StringBuilder();
-                        
-                        Pattern_Class.GenerateInject(type, ref inject);
-                        
+                        Pattern_Class.GenerateInject(type, inject);
+
                         Pattern_Function.GenerateBindings(type, bindings);
                         Pattern_Enum.GenerateBindings(type, bindings);
                         Pattern_Property.GenerateBindings(type, bindings, inject);

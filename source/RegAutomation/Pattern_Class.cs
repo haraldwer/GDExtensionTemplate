@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace RegAutomation
@@ -99,16 +100,16 @@ namespace RegAutomation
             return (closureStart, closureEnd);
         }
         
-        public static void GenerateIncludes(KeyValuePair<string, DB.Header> header, ref string content)
+        public static void GenerateIncludes(KeyValuePair<string, DB.Header> header, string content, out string includes)
         {
             includes = $"#include \"{header.Key}\"\n";
         }
         
-        public static void GenerateInject(DB.Type type, ref string inject)
+        public static void GenerateInject(DB.Type type, StringBuilder inject)
         {
-            inject += $"\tGDCLASS({type.Name}, {type.ParentName})\n";
-            inject += "protected: \n";
-            inject += "\tstatic void _bind_methods();\n";
+            inject.Append($"\tGDCLASS({type.Name}, {type.ParentName})\n");
+            inject.Append("protected: \n");
+            inject.Append("\tstatic void _bind_methods();\n");
         }
         
         public static string GetReg()
