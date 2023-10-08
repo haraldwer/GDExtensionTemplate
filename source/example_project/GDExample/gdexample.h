@@ -55,13 +55,13 @@ namespace godot
 
         REG_CLASS()
 
-        REG_ENUM()
+        REG_BITFIELD()
         enum Animals
         {
-            Cat,
-            Dog = 10,
-            Monkey = 17,
-            Giraffe = 20,
+            Cat = 1,
+            Dog = 1 << 1,
+            Monkey = 1 << 2,
+            Giraffe = 1 << 3,
         };
 
         REG_PROPERTY()

@@ -21,18 +21,22 @@
  */
 #define REG_PROPERTY(...)
 
- /**
-  * Usage:
-  * REG_ENUM()
-  * enum MyEnum
-  *	{
-  *		EntryA,
-  *		EntryB = 5,
-  *		EntryC,
-  *		EntryD = 15
-  *	}
-  */
+/**
+* Usage:
+* REG_ENUM()
+* enum MyEnum
+*	{
+*		EntryA,
+*		EntryB = 5,
+*		EntryC,
+*		EntryD = 15
+*	}
+*/
 #define REG_ENUM(...)
+/**
+ * Usage: Same as REG_ENUM
+ */
+#define REG_BITFIELD(...)
 
 /*
  * TODO:
