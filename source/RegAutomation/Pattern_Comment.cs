@@ -5,7 +5,7 @@ namespace RegAutomation
 {
     public class Pattern_Comment : Pattern
     {
-        public static void Process(KeyValuePair<string, DB.Header> header)
+        public static void ProcessHeader(KeyValuePair<string, DB.Header> header)
         {
             string content = header.Value.Content;
             
@@ -61,11 +61,6 @@ namespace RegAutomation
                 result.Append(content[content.Length - 1]);
 
             header.Value.Content = result.ToString();
-        }
-
-        public static void Generate(DB.Type type, StringBuilder inject)
-        {
-            // TODO: Inject comments as documentation
         }
     }
 }

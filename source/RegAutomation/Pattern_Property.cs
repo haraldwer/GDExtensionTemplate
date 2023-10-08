@@ -8,7 +8,7 @@ namespace RegAutomation
 {
     public class Pattern_Property : Pattern
     {
-        public static void Process(DB.Type type)
+        public static void ProcessType(DB.Type type)
         {
             MatchCollection matches = FindMatches(type.Content, "REG_PROPERTY");
             if (matches == null)

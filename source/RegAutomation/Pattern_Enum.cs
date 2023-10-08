@@ -8,7 +8,7 @@ namespace RegAutomation
 {
     public class Pattern_Enum : Pattern
     {
-        public static void Process(DB.Type type)
+        public static void ProcessType(DB.Type type)
         {
             MatchCollection matches = FindMatches(type.Content, "REG_ENUM");
             if (matches == null)
@@ -58,7 +58,7 @@ namespace RegAutomation
             {
                 foreach (var (constantName, constantValue) in @enum.Value.KeyValues)
                 {
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n");
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantValue}, false);\n\t");
                 }
             }
         }
