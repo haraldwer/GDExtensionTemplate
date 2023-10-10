@@ -11,13 +11,13 @@ This template project provides some useful functionality for working with GDExte
 
 ## Prerequsites
  * Godot 4 executable
- * C++ compiler
- * SCons
  * .NETFramework v4.8 (older versions might also work)
+ * Scoop
 
 See [Compiling Godot](https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html#requirements)
 
 ## Setup 
+ * Run command ``scoop install gcc python scons make mingw llvm``
  * Clone the repository. If the ``godot-cpp`` folder is empty, try ``--recursive`` when cloning to also get the submodules.
  * Copy godot executable to repository folder and rename to ``godot.exe``.
  * In your IDE, use ``ProjectLauncher`` configuration.
@@ -35,7 +35,6 @@ Registration-code will be injected into ``extension.cpp``. Class bindings will b
 
 ## Known issues / Future work
  * The debugger does not attach automatically to the godot process. You can still attach manually.
- * Limited to one registered class per header. 
 
 ## Notes
  * Intellisense / Intellij will only work after first compile.
@@ -43,4 +42,3 @@ Registration-code will be injected into ``extension.cpp``. Class bindings will b
  * The ``.sln`` and ``.vcxproj`` is based on the generated result of running ``scons platform=windows vsproj=yes`` in the godot engine repository.
  * NMake .sln requires an exe path without parameters. The ``ProjectLauncher`` project is a workaround for this.
  * I have not yet tested multiple GDExtension projects in the same solution.
- * This has only been tested using Rider 2023.2.

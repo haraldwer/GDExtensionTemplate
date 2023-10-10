@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using CppAst;
 
 namespace RegAutomation
 {
@@ -45,10 +42,12 @@ namespace RegAutomation
         }
         
         public static Dictionary<string, Header> Headers = new Dictionary<string, Header>();
+        public static CppCompilation Compile = new CppCompilation();
 
         public static void Load()
         {
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.h", SearchOption.AllDirectories);
+            List<string> parse = new List<string>();
             foreach (var file in files)
             {
                 if (file.Contains(".generated.h") || file.Contains(".injected.h"))
@@ -61,12 +60,32 @@ namespace RegAutomation
                 string content = File.ReadAllText(file);
                 if (content == "")
                     continue;
+                parse.Add(file);
+                
+                
                 Headers[file] = new Header
                 {
                     IncludeName = file.Substring(Directory.GetCurrentDirectory().Length + 1).Replace('\\', '.'),
                     Content = content
                 };
             }
+
+            //string p = "class C{ int i = 0; float func(int i) { return 1.0f; } };";
+            //var r = CppParser.Parse(p);
+            //Console.WriteLine(r.Classes.Count);
+                
+            Console.WriteLine("Dir " + Directory.GetCurrentDirectory());
+            var options = new CppParserOptions();
+            options.ParseMacros = true;
+            options.Defines.Add("REG_IN_IDE");
+            options.IncludeFolders.Add("..\\");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\gen\\include");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\include");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\gdextension");
+            Compile = CppParser.ParseFiles(parse, options);
+            if (Compile.HasErrors)
+                Console.WriteLine(Compile.Diagnostics.ToString());
+            Console.WriteLine("Classes: " + Compile.Classes.Count);
         }
     }
 }
