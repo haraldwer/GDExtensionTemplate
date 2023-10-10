@@ -19,8 +19,8 @@
     
     <ItemGroup>
         <PackageReference Include="CppAst" Version="0.13.0" />
-        <PackageReference Include="libclang.runtime.win-x64" Version="16.0.6" />
-        <PackageReference Include="libClangSharp.runtime.win-x64" Version="16.0.6" />
+        <PackageReference Include="libclang.runtime.win-x64" Version="15.0.0" />
+        <PackageReference Include="libClangSharp.runtime.win-x64" Version="15.0.0" />
     </ItemGroup>
 
 </Project>

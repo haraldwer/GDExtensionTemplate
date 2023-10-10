@@ -70,11 +70,10 @@ namespace RegAutomation
                 };
             }
 
-            //string p = "class C{ int i = 0; float func(int i) { return 1.0f; } };";
-            //var r = CppParser.Parse(p);
-            //Console.WriteLine(r.Classes.Count);
+            string p = "class C{ int i = 0; float func(int i) { return 1.0f; } };";
+            var r = CppParser.Parse(p);
+            Console.WriteLine(r.Classes.Count);
                 
-            Console.WriteLine("Dir " + Directory.GetCurrentDirectory());
             var options = new CppParserOptions();
             options.ParseMacros = true;
             options.Defines.Add("REG_IN_IDE");
@@ -82,10 +81,12 @@ namespace RegAutomation
             options.IncludeFolders.Add("..\\..\\godot-cpp\\gen\\include");
             options.IncludeFolders.Add("..\\..\\godot-cpp\\include");
             options.IncludeFolders.Add("..\\..\\godot-cpp\\gdextension");
+            options.AdditionalArguments.Add("-std=c++17");
             Compile = CppParser.ParseFiles(parse, options);
             if (Compile.HasErrors)
                 Console.WriteLine(Compile.Diagnostics.ToString());
             Console.WriteLine("Classes: " + Compile.Classes.Count);
+            Console.WriteLine("Functions: " + Compile.Functions.Count);
         }
     }
 }
