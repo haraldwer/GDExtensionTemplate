@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using CppAst;
 
 namespace RegAutomation
 {
@@ -6,15 +6,7 @@ namespace RegAutomation
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 0)
-                Directory.SetCurrentDirectory(args[0]);
-            else
-            {
-                string dir = Directory.GetCurrentDirectory();
-                int index = dir.IndexOf("source");
-                if (index != -1)
-                    Directory.SetCurrentDirectory(dir.Substring(0, index) + "source");
-            }
+            SetCurrentDir(args);
             
             foreach (var dir in Directory.GetDirectories(Directory.GetCurrentDirectory()))
             {
@@ -35,6 +27,19 @@ namespace RegAutomation
             return 0;
         }
 
+        static void SetCurrentDir(string[] args)
+        {
+            if (args.Length != 0)
+                Directory.SetCurrentDirectory(args[0]);
+            else
+            {
+                string dir = Directory.GetCurrentDirectory();
+                int index = dir.IndexOf("source");
+                if (index != -1)
+                    Directory.SetCurrentDirectory(dir.Substring(0, index) + "source");
+            }
+        }
+
         static void ProcessProject(string directory)
         {
             Console.WriteLine("Processing project: " + directory);
@@ -48,8 +53,10 @@ namespace RegAutomation
             Clean();            
         }
 
+        // Track written files for cleaning step
         private static Dictionary<string, string> WrittenFiles = new Dictionary<string, string>();
 
+        // Clean files that have not been touched
         static void Clean()
         {
             try
@@ -68,17 +75,18 @@ namespace RegAutomation
             }
         }
 
-        static void ThreadedIter(Action<KeyValuePair<string, DB.Header>> action)
+        // Helper function for iterating over all entries in DB using threadpool 
+        static void ThreadedIter(Action<DB.Header> action)
         {
             using (ManualResetEvent resetEvent = new ManualResetEvent(false))
             {
                 int toProcess = DB.Headers.Count;
-                foreach (KeyValuePair<string, DB.Header> header in DB.Headers)
+                foreach (DB.Header header in DB.Headers)
                 {
                     ThreadPool.QueueUserWorkItem(x => {
                         
                         // Perform action
-                        action((KeyValuePair<string, DB.Header>)x); 
+                        action((DB.Header)x); 
                         
                         // Safely decrement the counter
                         if (Interlocked.Decrement(ref toProcess)==0)
@@ -89,33 +97,46 @@ namespace RegAutomation
             }
         }
         
+        // Process the files 
         static void Process()
         {
+            var options = new CppParserOptions();
+            options.ParseMacros = true;
+            options.Defines.Add("REG_IN_IDE");
+            options.IncludeFolders.Add("..\\");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\gen\\include");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\include");
+            options.IncludeFolders.Add("..\\..\\godot-cpp\\gdextension");
+            options.AdditionalArguments.Add("-std=c++17");
+            
             ThreadedIter(h =>
             {
                 try
                 {
-                    // Headers
-                    Pattern_Comment.ProcessHeader(h);
-                    Pattern_Class.ProcessHeader(h);
-                    
-                    // Types
-                    foreach (var t in h.Value.Types)
-                    {
-                        Pattern_Function.ProcessType(t);
-                        Pattern_Enum.ProcessType(t);
-                        Pattern_Property.ProcessType(t);
-                    }
+                    var compile = CppParser.ParseFile(h.File, options);
+                    if (compile.HasErrors)
+                        throw new ArgumentException(compile.Diagnostics.ToString(), nameof(compile));
+                    h.Compile = compile;
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler.HandleError($"Failed to process {h.Key}", e);
+                    ErrorHandler.HandleError($"Failed to process {h.Name}", e);
                 }
             });
         }
         
         static void Generate()
         {
+            // Set up patterns
+            List<Pattern> patterns = new List<Pattern>()
+            {
+                new Pattern_Class(),
+                new Pattern_Comment(),
+                new Pattern_Enum(),
+                new Pattern_Function(),
+                new Pattern_Property()
+            };
+            
             // Read template content
             const string templatePath = "reg_class.template";
             if (!File.Exists(templatePath))
@@ -126,50 +147,30 @@ namespace RegAutomation
             {
                 try
                 {
-                    if (header.Key == "" || header.Value.Types.Count == 0 || header.Value.Content == "")
+                    if (header.Compile == null)
                         return;
+
+                    GeneratedContent generatedContent = new GeneratedContent();
+                    generatedContent.Includes.Append($"#include \"{header.File}\"\n");
                     
-                    string content = template;
-                    Pattern_Class.GenerateIncludes(header, content, out string includes);
+                    foreach (var pattern in patterns)
+                        pattern.Generate(header, generatedContent);
                     
-                    StringBuilder bindClassMethods = new StringBuilder();
-                    StringBuilder injects = new StringBuilder();
-                    StringBuilder undefs = new StringBuilder();
-                    foreach(var type in header.Value.Types)
-                    {
-                        StringBuilder inject = new StringBuilder($"#define REG_CLASS_LINE_{type.RegClassLineNumber}() \n");
-                        StringBuilder bindings = new StringBuilder();
-                        Pattern_Class.GenerateInject(type, inject);
-
-                        Pattern_Function.GenerateBindings(type, bindings);
-                        Pattern_Enum.GenerateBindings(type, bindings);
-                        Pattern_Property.GenerateBindings(type, bindings, inject);
-
-                        inject = inject.Replace("\n", "\\\n");
-                        inject.Append("private: \n");
-                        injects.Append(inject);
-
-                        string bindMethod = $"void {type.Name}::_bind_methods()\n{{\n\t{bindings}\n}}\n\n";
-                        bindClassMethods.Append(bindMethod);
-
-                        string undef = $"#undef REG_CLASS_LINE_{type.RegClassLineNumber}\n";
-                        undefs.Append(undef);
-                    }
                     // Replace keywords in the template file here
-                    content = content.Replace("REG_INCLUDE", includes);
-                    content = content.Replace("REG_INJECT", injects.ToString());
-                    content = content.Replace("REG_UNDEF", undefs.ToString());
-                    content = content.Replace("REG_BIND_CLASS_METHODS", bindClassMethods.ToString());
+                    string content = template;
+                    content = content.Replace("REG_INCLUDE", generatedContent.Includes.ToString());
+                    content = content.Replace("REG_INJECT", generatedContent.Injects.ToString());
+                    content = content.Replace("REG_UNDEF", generatedContent.Undefs.ToString());
+                    content = content.Replace("REG_BINDINGS", generatedContent.Bindings.ToString());
                     
                     // Write to file
-                    string contentFile = header.Value.IncludeName + ".generated.h";
+                    string contentFile = header.Name + ".generated.h";
                     GenerateFile(contentFile, content);
                 }
                 catch (Exception e)
                 {
-                    ErrorHandler.HandleError($"Failed to generate {header.Key}", e);
+                    ErrorHandler.HandleError($"Failed to generate {header.Name}", e);
                 }
-
             });
         }
         

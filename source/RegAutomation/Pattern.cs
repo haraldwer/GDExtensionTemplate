@@ -1,26 +1,26 @@
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace RegAutomation
 {
+    public class GeneratedContent
+    {
+        public readonly StringBuilder Includes = new();
+        public readonly StringBuilder Injects = new();
+        public readonly StringBuilder Bindings = new();
+        public readonly StringBuilder Undefs = new();
+    }
+    
     public class Pattern
     {
-        protected static MatchCollection FindMatches(string content, string pattern)
+        public virtual void Generate(DB.Header header, GeneratedContent generated)
         {
-            if (content == null || pattern == null)
-                return null;
-            try
-            {
-                return Regex.Matches(content, pattern);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return null;
+            throw new NotImplementedException();
         }
+        
         protected static Dictionary<string, string> FindMetaProperties(string content, int searchStartIndex)
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
+            
             // First, find property separator indices so we know the intervals where properties are
             int level = 0;
             List<int> propertySeparatorIndices = new List<int>();
@@ -52,6 +52,7 @@ namespace RegAutomation
                     }
                 }
             }
+            
             // Then, we retrieve every substring defined by the intervals.
             for(int i = 0; i < propertySeparatorIndices.Count - 1; i++)
             {

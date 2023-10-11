@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <OutputPath>$(SolutionDir).temp\</OutputPath>
     </PropertyGroup>
 
@@ -18,9 +18,9 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="CppAst" Version="0.13.0" />
-        <PackageReference Include="libclang.runtime.win-x64" Version="15.0.0" />
-        <PackageReference Include="libClangSharp.runtime.win-x64" Version="15.0.0" />
+        <PackageReference Include="CppAst" Version="0.10.0" />
+        <PackageReference Include="libClangSharp.runtime.win-x64" Version="16.0.6" />
+        <PackageReference Include="libclang.runtime.win-x64" Version="16.0.6" />
     </ItemGroup>
 
 </Project>
