@@ -61,6 +61,9 @@ namespace RegAutomation
                 string content = File.ReadAllText(file);
                 if (content == "")
                     continue;
+
+                var result = Parser.Parse(content, new[] {"REG_CLASS", "REG_FUNCTION", "REG_PROPERTY", "REG_ENUM", });
+                
                 Headers[file] = new Header
                 {
                     IncludeName = file.Substring(Directory.GetCurrentDirectory().Length + 1).Replace('\\', '.'),
