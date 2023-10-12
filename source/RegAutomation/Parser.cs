@@ -1,22 +1,23 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RegAutomation
 {
+    using TokenCollection = List<string>;
+    
     public class Context
     {
         public int Start;
         public int End;
         public string Content;
-        public List<string> Tokens; 
+        public TokenCollection Tokens; 
+        public TokenCollection Declaration;
     }
 
     public class Params
     {
         public int Start;
         public int End;
-        public List<string> Content;
+        public TokenCollection Content;
     }
 
     public class Macro
@@ -68,7 +69,7 @@ namespace RegAutomation
             int paramStart = content.IndexOf('(', startIndex, 20) + 1;
             int paramEnd = ScopeDepthSearch(content, paramStart - 1, '(', new[] {')'}) - 1;
             string text = content.Substring(paramStart, paramEnd - paramStart);
-            List<string> parameters = text.Split(',').ToList(); // Consider scoped ,
+            TokenCollection parameters = text.Split(',').ToList(); // Consider scoped ,
             return new Params()
             {
                 Start = paramStart,
@@ -82,21 +83,23 @@ namespace RegAutomation
             int start = ScopeOuterSearch(content, startIndex, '{', '}');
             int end = ScopeDepthSearch(content, start, '{', new[] {'}'});
             string text = content.Substring(start, end - start);
-            List<string> tokens = Tokenize(text);
+            TokenCollection decl = Tokenize(FindDeclaration(content, start));
+            TokenCollection tokens = Tokenize(text);
             return new Context()
             {
+                Declaration = decl,
                 Start = start,
                 End = end,
                 Content = text,
                 Tokens = tokens
             };
         }
-        
+
         private static Context FindInnerContext(string content, int startIndex)
         {
             int scopeEnd = ScopeDepthSearch(content, startIndex, '{', new[] {'}', ';'});
             string text = content.Substring(startIndex, scopeEnd - startIndex);
-            List<string> tokens = Tokenize(text);
+            TokenCollection tokens = Tokenize(text);
             return new Context()
             {
                 Start = startIndex,
@@ -106,7 +109,33 @@ namespace RegAutomation
             };
         }
         
-        private static List<string> Tokenize(string text)
+        private static string FindDeclaration(string content, int startIndex)
+        {
+            // Somewhere before start is a declaration
+
+            // Possible delimiters 
+            string[] delim = {
+                ";", "{", "}", "#pragma once", ">",
+            };
+
+            // Find delimiter index
+            int dIndex = 0; 
+            foreach (var d in delim)
+            {
+                int i = content.LastIndexOf(d, startIndex - 1);
+                if (i > dIndex)
+                    dIndex = i;
+            }
+            
+            if (dIndex == 0)
+                return "";
+
+            string decl = content.Substring(dIndex + 1, startIndex - dIndex - 1);
+            string stripped = StripComments(decl); 
+            return stripped.Trim();
+        }
+        
+        private static TokenCollection Tokenize(string text)
         {
             // Strip comments
             string strip = StripComments(text);
@@ -118,18 +147,22 @@ namespace RegAutomation
                 formatted = formatted.Replace(c.ToString(), "");
             
             // Parse tokens
-            // TODO: Blankspace
-            const string tokens = ";:,(){}";
+            const string separators = ";:,(){}";
             int lastToken = 0;
-            List<string> result = new List<string>();
+            TokenCollection result = new TokenCollection();
             for (int i = 0; i < formatted.Length; i++)
             {
-                if (!tokens.Contains(formatted[i])) 
+                if (!separators.Contains(formatted[i])) 
                     continue;
-                int start = lastToken + 1;
+                int start = lastToken;
                 int c = i - start;
                 if (c > 0)
-                    result.Add(formatted.Substring(start, c).Trim());
+                {
+                    string[] tokens = formatted.Substring(start, c).Trim().Split(" ");
+                    foreach (string t in tokens)
+                        if (t != "")
+                            result.Add(t);
+                }
                 result.Add(formatted[i].ToString());
                 lastToken = i + 1;
             }
