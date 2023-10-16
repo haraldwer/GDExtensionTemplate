@@ -33,7 +33,7 @@ namespace godot
         REG_FUNCTION()
         static double multiply(double x, double y);
         
-        REG_PROPERTY(PROPERTY_HINT_RANGE, "0,20,0.01")
+        REG_PROPERTY(REG_P_Info=(PROPERTY_HINT_RANGE, "0,20,0.01"))
         float property = 0;
 
         REG_PROPERTY()

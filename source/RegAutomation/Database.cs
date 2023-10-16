@@ -57,6 +57,7 @@ namespace RegAutomation
                 string content = File.ReadAllText(file);
                 if (content == "")
                     continue;
+
                 Headers[file] = new Header
                 {
                     IncludeName = file.Substring(Directory.GetCurrentDirectory().Length + 1).Replace('\\', '.'),

@@ -22,20 +22,10 @@ namespace GodotRun
             startInfo.WorkingDirectory = dir; 
             process.StartInfo = startInfo;
             
-            
-            //process.OutputDataReceived += OutputHandler;
-            //process.ErrorDataReceived += OutputHandler;
-
             process.Start();
             while (!process.StandardOutput.EndOfStream)
                 Console.WriteLine(process.StandardOutput.ReadLine());
-            //process.BeginOutputReadLine();
-            //process.BeginErrorReadLine();
             process.WaitForExit();
-        }
-
-        static void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine) 
-        {
         }
     }
 }

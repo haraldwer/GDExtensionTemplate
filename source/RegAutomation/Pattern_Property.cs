@@ -7,28 +7,19 @@ namespace RegAutomation
     {
         public static void ProcessType(DB.Type type)
         {
-            MatchCollection matches = FindMatches(type.Content, "REG_PROPERTY");
-            if (matches == null)
-                return;
-
-            foreach (Match match in matches)
+            var result = Parser.Parse(type.Content, "REG_PROPERTY");
+            foreach (Macro macro in result)
             {
                 Console.WriteLine("REG_PROPERTY: " + Path.GetFileName(type.FileName));
 
-                string metaStart = type.Content.Substring(match.Index + match.Value.Length + 1);
-                string meta = metaStart.Substring(0, metaStart.IndexOf(')'));
+                int decEnd = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s is ";" or "=" or "{");
+                string name = macro.InnerContext.Tokens[decEnd - 1];
+                string var = macro.InnerContext.Tokens[decEnd - 2];
                 
-                int startIndex = match.Value.Length + match.Index + meta.Length + 2;
-                string sub = type.Content.Substring(startIndex, type.Content.Length - startIndex);
-                string content = sub.Substring(0, sub.IndexOf(';')).Trim();
-                var declaration = content.Split(' ');
-                if (declaration.Length < 2)
-                {
-                    Console.WriteLine("Incorrect declaration: " + declaration);
-                    continue;
-                }
-                string var = declaration[0];
-                string name = declaration[1];
+                macro.Params.Content.TryGetValue("REG_P_Info", out string meta);
+                if (meta == null)
+                    meta = "";
+                
                 type.Properties[name] = new DB.Prop()
                 {
                     Type = var,

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -7,7 +7,7 @@
         <Nullable>disable</Nullable>
         <OutputPath>$(SolutionDir).temp\</OutputPath>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <PostBuildEvent>copy $(SolutionDir).temp\net7.0\RegAutomation.* $(SolutionDir)</PostBuildEvent>
     </PropertyGroup>
