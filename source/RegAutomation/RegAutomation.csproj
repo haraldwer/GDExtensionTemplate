@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <PostBuildEvent>copy $(SolutionDir).temp\net7.0\win-x64\RegAutomation.exe $(SolutionDir)</PostBuildEvent>
+        <PostBuildEvent>copy $(SolutionDir).temp\net7.0\RegAutomation.* $(SolutionDir)</PostBuildEvent>
     </PropertyGroup>
 
 </Project>

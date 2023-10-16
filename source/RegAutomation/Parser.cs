@@ -17,7 +17,7 @@ namespace RegAutomation
     {
         public int Start;
         public int End;
-        public TokenCollection Content;
+        public Dictionary<string, string> Content;
     }
 
     public class Macro
@@ -25,12 +25,13 @@ namespace RegAutomation
         public string Name;
         public Params Params; 
         public Context OuterContext;
-        public Context InnerContext; 
+        public Context InnerContext;
+        public int LineNumber;
     }
     
     public class Parser
     {
-        public static List<Macro> Parse(string content, string[] macros)
+        public static List<Macro> Parse(string content, string macro)
         {
             // Look for macros
             
@@ -44,37 +45,72 @@ namespace RegAutomation
             // Find parameters
 
             List<Macro> result = new List<Macro>();
-            foreach (string macro in macros)
+            foreach (Match match in Regex.Matches(content, macro))
             {
-                foreach (Match match in Regex.Matches(content, macro))
+                var parameters = FindParams(content, match.Index);
+                int contextStart = parameters.End + 1;
+                Context outerContext = FindOuterContext(content, contextStart);
+                Context innerContext = FindInnerContext(content, contextStart);
+                int lineNumber = FindLineNumber(content, match.Index);
+                result.Add(new Macro()
                 {
-                    var parameters = FindParams(content, match.Index);
-                    int contextStart = parameters.End + 1;
-                    Context outerContext = FindOuterContext(content, contextStart);
-                    Context innerContext = FindInnerContext(content, contextStart);
-                    result.Add(new Macro()
-                    {
-                        Name = macro,
-                        Params = parameters,
-                        OuterContext = outerContext,
-                        InnerContext = innerContext
-                    });
-                }
+                    Name = macro,
+                    Params = parameters,
+                    OuterContext = outerContext,
+                    InnerContext = innerContext,
+                    LineNumber = lineNumber
+                });
             }
             return result;
         }
 
         private static Params FindParams(string content, int startIndex)
         {
+            // Greedy param collection by splitting on ,
             int paramStart = content.IndexOf('(', startIndex, 20) + 1;
             int paramEnd = ScopeDepthSearch(content, paramStart - 1, '(', new[] {')'}) - 1;
             string text = content.Substring(paramStart, paramEnd - paramStart);
-            TokenCollection parameters = text.Split(',').ToList(); // Consider scoped ,
+            List<string> parameters = text.Split(',').ToList(); // Consider scoped
+            if (parameters.Count == 1 && parameters[0] == "")
+                parameters.Clear();
+            
+            // Capture meta scope as one param
+            int scope = 0;
+            int scopeStart = -1;
+            string scopeParam = "";
+            Dictionary<string, string> scopedParams = new Dictionary<string, string>();
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                scope += parameters[i].Count(x => x == '('); // Enter scope
+                if (scope > 0)
+                {
+                    if (scopeStart == -1) // Enter scope
+                        scopeStart = i;
+                    if (scopeParam != "")
+                        scopeParam += ", ";
+                    scopeParam += parameters[i];
+                    scope -= parameters[i].Count(x => x == ')'); // Exit scope
+                    if (scope <= 0) // Exit scope
+                    {
+                        int metaStart = scopeParam.IndexOf('(') + 1;
+                        int metaEnd = scopeParam.LastIndexOf(')') - 1;
+                        string param = parameters[scopeStart].Split("=")[0].Trim();
+                        scopedParams[param] = scopeParam.Substring(metaStart, metaEnd - metaStart);
+                        scopeParam = "";
+                        scopeStart = -1;
+                    }
+                }
+                else
+                {
+                    scopedParams[parameters[i]] = "";
+                }
+            }
+            
             return new Params()
             {
                 Start = paramStart,
                 End = paramEnd,
-                Content = parameters
+                Content = scopedParams
             };
         }
 
@@ -109,8 +145,20 @@ namespace RegAutomation
             };
         }
         
+        private static int FindLineNumber(string content, int matchIndex)
+        {
+            int c = 0;
+            for (int i = 0; i < Math.Min(matchIndex, content.Length); i++)
+                if (content[i] == '\n')
+                    c++;
+            return c; 
+        }
+        
         private static string FindDeclaration(string content, int startIndex)
         {
+            if (startIndex < 1 || startIndex >= content.Length)
+                return "";
+            
             // Somewhere before start is a declaration
 
             // Possible delimiters 
@@ -166,9 +214,12 @@ namespace RegAutomation
                 result.Add(formatted[i].ToString());
                 lastToken = i + 1;
             }
-            string end = formatted.Substring(lastToken);
-            if (end != "")
-                result.Add(end);
+            
+            string[] end = formatted.Substring(lastToken).Trim().Split(" ");
+            foreach (string t in end)
+                if (t != "")
+                    result.Add(t);
+            
             return result;
         }
 
@@ -233,6 +284,30 @@ namespace RegAutomation
                 }
             }
             return -1; 
+        }
+
+        public static int FindTokenMatch(TokenCollection InTokens, Func<string, bool> InMatch, int InSearchStart = 0)
+        {
+            for (int i = InSearchStart; i < InTokens.Count; i++)
+                if (InMatch(InTokens[i]))
+                    return i; 
+            return -1; 
+        }
+
+        public static List<string> FindMatchingTokens(TokenCollection InTokens, Func<string, bool> InMatch, int InOffset = 0, int InSearchStart = 0)
+        {
+            List<string> result = new List<string>();
+            while (true)
+            {
+                int find = FindTokenMatch(InTokens, InMatch, InSearchStart);
+                if (find < 0)
+                    break;
+                InSearchStart = find + 1;
+                string token = InTokens[find + InOffset];
+                result.Add(token);
+            }
+
+            return result; 
         }
     }
 }
