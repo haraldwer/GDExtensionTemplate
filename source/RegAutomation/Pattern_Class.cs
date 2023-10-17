@@ -96,11 +96,6 @@ namespace RegAutomation
             return (closureStart, closureEnd);
         }
         
-        public static void GenerateIncludes(KeyValuePair<string, DB.Header> header, string content, out string includes)
-        {
-            includes = $"#include \"{header.Key}\"\n";
-        }
-        
         public static void GenerateInject(DB.Type type, StringBuilder inject)
         {
             inject.Append($"\tGDCLASS({type.Name}, {type.ParentName})\n");
@@ -116,16 +111,6 @@ namespace RegAutomation
                     if (type.Name != "")
                         reg += $"ClassDB::register_class<{type.Name}>();\n";
             return reg; 
-        }
-
-        public static string GetIncl()
-        {
-            // TODO: Compute the correct include sequence to avoid compilation errors
-            string include = "";
-            foreach (var header in DB.Headers)
-                if (header.Value.Types.Count > 0)
-                    include += $"#include \".generated/{header.Value.IncludeName}.generated.h\"\n";
-            return include;
         }
     }
 }
