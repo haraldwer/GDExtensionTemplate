@@ -15,7 +15,7 @@ namespace RegAutomation
         {
             // This pattern matches "#include<zero or more whitespaces><opening quotation mark>"
             // Example: #include "MyNode.h", #include"TestNode.h"
-            MatchCollection matches = FindMatches(header.Value.Content, "#include\\s*\"");
+            MatchCollection matches = Regex.Matches(header.Value.Content, "#include\\s*\"");
             if (matches == null)
             {
                 Console.WriteLine("No include found");
