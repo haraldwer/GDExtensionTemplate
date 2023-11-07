@@ -38,6 +38,7 @@ namespace RegAutomation
             public string IncludeName = ""; // The corresponding generated header's name
             public string Content = "";
             public List<Type> Types = new List<Type>();
+            public List<string> Includes = new List<string>(); 
         }
         
         public static Dictionary<string, Header> Headers = new Dictionary<string, Header>();

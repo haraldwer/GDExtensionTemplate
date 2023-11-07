@@ -97,6 +97,7 @@ namespace RegAutomation
                 {
                     // Headers
                     Pattern_Comment.ProcessHeader(h);
+                    Pattern_Include.ProcessHeader(h);
                     Pattern_Class.ProcessHeader(h);
                     
                     // Types
@@ -130,7 +131,7 @@ namespace RegAutomation
                         return;
                     
                     string content = template;
-                    Pattern_Class.GenerateIncludes(header, content, out string includes);
+                    Pattern_Include.GenerateIncludes(header, content, out string includes);
                     
                     StringBuilder bindClassMethods = new StringBuilder();
                     StringBuilder injects = new StringBuilder();
@@ -178,7 +179,7 @@ namespace RegAutomation
             try
             {
                 // Create reg and include code
-                GenerateFile("reg_incl.generated.h", Pattern_Class.GetIncl());
+                GenerateFile("reg_incl.generated.h", Pattern_Include.GetIncl());
                 GenerateFile("reg_init.generated.h", Pattern_Class.GetReg());
                 GenerateFile("reg_deinit.generated.h", "");
                 File.SetLastWriteTime("extension.cpp", DateTime.Now);
