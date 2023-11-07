@@ -11,7 +11,7 @@ namespace RegAutomation
             {
                 Console.WriteLine("REG_CLASS: " + Path.GetFileName(header.Key));
                 
-                string className = macro.OuterContext.Tokens[1];
+                string className = macro.OuterContext.Declaration[1];
                 int parentTokenIndex = Parser.FindTokenMatch(macro.OuterContext.Declaration, s => s != "public", 3);
                 string parentClass = macro.OuterContext.Declaration[parentTokenIndex];
                 // TODO: Multiple inheritance

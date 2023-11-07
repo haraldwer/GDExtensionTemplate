@@ -147,7 +147,7 @@ namespace RegAutomation
         
         private static int FindLineNumber(string content, int matchIndex)
         {
-            int c = 0;
+            int c = 1;
             for (int i = 0; i < Math.Min(matchIndex, content.Length); i++)
                 if (content[i] == '\n')
                     c++;

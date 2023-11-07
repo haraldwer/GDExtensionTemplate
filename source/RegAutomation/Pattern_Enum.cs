@@ -14,12 +14,35 @@ namespace RegAutomation
                 
                 int nameIndex = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s != "enum" && s != "class");
                 string name = macro.InnerContext.Tokens[nameIndex];
-                List<string> keys = Parser.FindMatchingTokens(macro.InnerContext.Tokens, s => s is "}" or ",", -1);
+
+                List<Tuple<string, int>> values = new List<Tuple<string, int>>();
+                int prevVal = -1;
+                for (int i = 0; i < macro.InnerContext.Tokens.Count; i++)
+                {
+                    string token = macro.InnerContext.Tokens[i];
+                    if (token is not ("{" or ",")) 
+                        continue;
+                    
+                    // Next token might be val!
+                    int keyIndex = i + 1; 
+                    string key = macro.InnerContext.Tokens[keyIndex];
+                    if (key == "}")
+                        continue;
+
+                    int value = prevVal + 1;
+                    int valueIndex = i + 3; 
+                    if (valueIndex < macro.InnerContext.Tokens.Count && 
+                        macro.InnerContext.Tokens[keyIndex + 1] == "=")
+                        value = Convert.ToInt32(macro.InnerContext.Tokens[valueIndex]);
+                    
+                    values.Add(new (key, value));
+                    prevVal = value; 
+                }
                 
                 type.Enums[name] = new DB.Enum()
                 {
                     IsBitField = macro.Params.Content.ContainsKey("REG_P_Bitfield"),
-                    Keys = keys
+                    Values = values
                 };
             }
         }
@@ -29,9 +52,10 @@ namespace RegAutomation
             foreach (var @enum in type.Enums)
             {
                 string isBitFieldString = @enum.Value.IsBitField ? "true" : "false";
-                foreach (var constantName in @enum.Value.Keys)
+                foreach (var pair in @enum.Value.Values)
                 {
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{constantName}\", {constantName}, {isBitFieldString});\n\t");
+                    // ClassDB::bind_integer_constant(className, enumName, constName, constVal, isBitfield);
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{pair.Item1}\", {pair.Item2}, {isBitFieldString});\n\t");
                 }
             }
         }

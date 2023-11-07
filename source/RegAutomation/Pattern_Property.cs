@@ -44,7 +44,7 @@ namespace RegAutomation
                 
                 // Property bindings
                 propertyBindings += $"ClassDB::add_property(\"{type.Name}\", ";
-                string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}"; 
+                string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}\""; 
                 propertyBindings += $"PropertyInfo(Variant::{variant}, \"{func.Key}\"{meta}), ";
                 
                 var (get, set) = GetGetterSetter(variant, func.Key);

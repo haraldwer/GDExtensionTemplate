@@ -15,7 +15,7 @@ namespace RegAutomation
 
                 int paramStartIndex = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s is "(");
                 string name = macro.InnerContext.Tokens[paramStartIndex - 1];
-                List<string> paramResult = Parser.FindMatchingTokens(macro.InnerContext.Tokens, s => s is "," or ")", -1, paramStartIndex);
+                List<string> paramResult = Parser.FindMatchingTokens(macro.InnerContext.Tokens, s => s is "," or ")", -1, paramStartIndex + 2);
                 
                 type.Functions[name] = new DB.Func()
                 {
