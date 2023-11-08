@@ -1,4 +1,5 @@
 using System.Text;
+using RegAutomation.Core;
 
 namespace RegAutomation
 {
@@ -6,21 +7,14 @@ namespace RegAutomation
     {
         public static void ProcessHeader(KeyValuePair<string, DB.Header> header)
         {
-            var result = Parser.Parse(header.Value.Content, "REG_CLASS");
-            foreach (Macro macro in result)
+            Console.WriteLine("REG_CLASS: " + Path.GetFileName(header.Key));
+            foreach(ClassMacro macro in ClassParser.Instance.Parse(header.Value.Content))
             {
-                Console.WriteLine("REG_CLASS: " + Path.GetFileName(header.Key));
-                
-                string className = macro.OuterContext.Declaration[1];
-                int parentTokenIndex = Parser.FindTokenMatch(macro.OuterContext.Declaration, s => s != "public", 3);
-                string parentClass = macro.OuterContext.Declaration[parentTokenIndex];
-                // TODO: Multiple inheritance
-                
                 header.Value.Types.Add(new DB.Type() { 
                     FileName = header.Key,
-                    Name = className, 
-                    Content = macro.OuterContext.Content,
-                    ParentName = parentClass, 
+                    Name = macro.ClassName, 
+                    Content = macro.Content,
+                    ParentName = macro.ParentClassName, 
                     RegClassLineNumber = macro.LineNumber, 
                 });
             }

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using RegAutomation.Core;
 
 namespace RegAutomation
 {
@@ -6,43 +7,13 @@ namespace RegAutomation
     {
         public static void ProcessType(DB.Type type)
         {
-            var result = Parser.Parse(type.Content, "REG_ENUM");
-
-            foreach (Macro macro in result)
+            Console.WriteLine($"REG_ENUM: " + Path.GetFileName(type.FileName));
+            foreach(EnumMacro macro in EnumParser.Instance.Parse(type.Content))
             {
-                Console.WriteLine("REG_ENUM: " + Path.GetFileName(type.FileName));
-                
-                int nameIndex = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s != "enum" && s != "class");
-                string name = macro.InnerContext.Tokens[nameIndex];
-
-                List<Tuple<string, int>> values = new List<Tuple<string, int>>();
-                int prevVal = -1;
-                for (int i = 0; i < macro.InnerContext.Tokens.Count; i++)
+                type.Enums[macro.Name] = new DB.Enum()
                 {
-                    string token = macro.InnerContext.Tokens[i];
-                    if (token is not ("{" or ",")) 
-                        continue;
-                    
-                    // Next token might be val!
-                    int keyIndex = i + 1; 
-                    string key = macro.InnerContext.Tokens[keyIndex];
-                    if (key == "}")
-                        continue;
-
-                    int value = prevVal + 1;
-                    int valueIndex = i + 3; 
-                    if (valueIndex < macro.InnerContext.Tokens.Count && 
-                        macro.InnerContext.Tokens[keyIndex + 1] == "=")
-                        value = Convert.ToInt32(macro.InnerContext.Tokens[valueIndex]);
-                    
-                    values.Add(new (key, value));
-                    prevVal = value; 
-                }
-                
-                type.Enums[name] = new DB.Enum()
-                {
-                    IsBitField = macro.Params.Content.ContainsKey("REG_P_Bitfield"),
-                    Values = values
+                    IsBitField = macro.IsBitField,
+                    Keys = macro.Keys,
                 };
             }
         }
@@ -52,10 +23,10 @@ namespace RegAutomation
             foreach (var @enum in type.Enums)
             {
                 string isBitFieldString = @enum.Value.IsBitField ? "true" : "false";
-                foreach (var pair in @enum.Value.Values)
+                foreach (var key in @enum.Value.Keys)
                 {
                     // ClassDB::bind_integer_constant(className, enumName, constName, constVal, isBitfield);
-                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{pair.Item1}\", {pair.Item2}, {isBitFieldString});\n\t");
+                    bindings.Append($"ClassDB::bind_integer_constant(\"{type.Name}\", \"{@enum.Key}\", \"{key}\", {key}, {isBitFieldString});\n\t");
                 }
             }
         }

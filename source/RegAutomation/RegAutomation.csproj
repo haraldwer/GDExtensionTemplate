@@ -12,4 +12,8 @@
         <PostBuildEvent>copy $(SolutionDir).temp\net7.0\RegAutomation.* $(SolutionDir)</PostBuildEvent>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\RegAutomation.Core\RegAutomation.Core.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,27 +1,58 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_project", "example_project\example_project.vcxproj", "{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE} = {1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegAutomation", "RegAutomation\RegAutomation.csproj", "{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegAutomation", "RegAutomation\RegAutomation.csproj", "{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{86791453-5079-45D0-984B-1A53B742BE15} = {86791453-5079-45D0-984B-1A53B742BE15}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectLauncher", "ProjectLauncher\ProjectLauncher.csproj", "{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectLauncher", "ProjectLauncher\ProjectLauncher.csproj", "{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD} = {426BA961-580F-4B6B-9D56-8BAD4AEF88CD}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RegAutomation.Core", "RegAutomation.Core\RegAutomation.Core.csproj", "{86791453-5079-45D0-984B-1A53B742BE15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegAutomation.Core.Tests", "RegAutomation.Core.Tests\RegAutomation.Core.Tests.csproj", "{21627873-BAC5-4817-93FD-70C666D49CC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.ActiveCfg = editor|x64
 		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Debug|Any CPU.Build.0 = editor|x64
+		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Release|Any CPU.ActiveCfg = editor|x64
+		{426BA961-580F-4B6B-9D56-8BAD4AEF88CD}.Release|Any CPU.Build.0 = editor|x64
 		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A68DCDF-7727-41AC-9A73-5F1C19B09FBE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{635C1291-3EBA-48B4-B9F5-801AE4FB78EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86791453-5079-45D0-984B-1A53B742BE15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86791453-5079-45D0-984B-1A53B742BE15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86791453-5079-45D0-984B-1A53B742BE15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86791453-5079-45D0-984B-1A53B742BE15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21627873-BAC5-4817-93FD-70C666D49CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21627873-BAC5-4817-93FD-70C666D49CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21627873-BAC5-4817-93FD-70C666D49CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21627873-BAC5-4817-93FD-70C666D49CC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5697124C-E4A3-410D-9228-6E0287F78C05}
 	EndGlobalSection
 EndGlobal
