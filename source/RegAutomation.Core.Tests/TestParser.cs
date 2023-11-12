@@ -28,7 +28,7 @@ namespace RegAutomation.Core.Tests
         public void TestFindLineNumber()
         {
             string source = """
-                #include #include <godot_cpp/classes/node3d.hpp>
+                #include <godot_cpp/classes/node3d.hpp>
 
                 // This is a test node.
                 class TestNode : Node3D
@@ -40,7 +40,7 @@ namespace RegAutomation.Core.Tests
                 """;
             Assert.That(FindLineNumber(source, source.IndexOf("REG_CLASS")), Is.EqualTo(6));
             source = """
-                #include #include <godot_cpp/classes/node2d.hpp>
+                #include <godot_cpp/classes/node2d.hpp>
                 
                 /* This is a test node, 
                 but with a different code style.
