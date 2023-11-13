@@ -11,7 +11,9 @@ def getSubdirs(path) :
             if os.path.isdir(os.path.join(path, name)) and 
                 name != ".idea" and 
                 name != "x64" and 
-                name != ".temp" ]
+                name != ".temp" and 
+                name != "RegAutomation" and
+                name != "ProjectLauncher"]
     return lst
 
 def getDirsRec(path) :
