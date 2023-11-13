@@ -44,3 +44,13 @@ Registration-code will be injected into ``extension.cpp``. Class bindings will b
  * NMake .sln requires an exe path without parameters. The ``ProjectLauncher`` project is a workaround for this.
  * I have not yet tested multiple GDExtension projects in the same solution.
  * This has only been tested using Rider 2023.2.
+
+## Unit Tests
+
+This section assumes that Visual Studio Community 2022 is being used as the IDE of choice.
+
+Unit tests are implemented in the [RegAutomation.Core.Tests](source/RegAutomation/RegAutomation.Core.Tests/) project. This project is included in both [`solution.sln`](source/solution.sln) and [`RegAutomation.sln`](source/RegAutomation/RegAutomation.sln). 
+
+To run unit tests from `solution.sln`, right click on the `RegAutomation.Core.Tests` project in the Solution Explorer, and select `Run Tests`. Do _not_ use `Run All Tests` in `solution.sln`, as this will trigger the build process and cause scons to build the C++ project, wasting several minutes before the tests actually get run.
+
+Alternatively, you can run unit tests from `RegAutomation.sln` instead. This solution does not include `ProjectLauncher` and the C++ project, so you can just select `Test > Run All Tests` from the toolbar to run tests without the aforementioned issues.
