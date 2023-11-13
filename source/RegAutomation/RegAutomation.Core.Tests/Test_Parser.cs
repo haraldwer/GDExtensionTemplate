@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using RegAutomation.Core;
 
 namespace RegAutomation.Core.Tests
 {
