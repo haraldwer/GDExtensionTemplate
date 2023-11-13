@@ -4,7 +4,7 @@ using RegAutomation.Core;
 namespace RegAutomation.Core.Tests
 {
     [TestFixture]
-    internal class TestParser : ParserBase
+    internal class Test_Parser : ParserBase
     {
         [Test]
         public void TestFindParams()

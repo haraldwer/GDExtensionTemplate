@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace RegAutomation.Core.Tests
 {
     [TestFixture]
-    internal class TestEnumParser
+    internal class Test_EnumParser
     {
         [Test]
         public void TestParse()

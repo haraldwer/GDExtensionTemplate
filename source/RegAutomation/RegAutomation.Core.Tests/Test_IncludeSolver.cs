@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace RegAutomation.Core.Tests
 {
     [TestFixture]
-    internal class TestIncludeSolver
+    internal class Test_IncludeSolver
     {
         [Test]
         public void TestSolve()
