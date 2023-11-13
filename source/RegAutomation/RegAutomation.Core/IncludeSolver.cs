@@ -1,80 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static RegAutomation.DB;
 
-namespace RegAutomation
+namespace RegAutomation.Core
 {
-    public class Pattern_Include : Pattern
+    public static class IncludeSolver
     {
-        public static void ProcessHeader(KeyValuePair<string, DB.Header> header)
-        {
-            // This pattern matches "#include<zero or more whitespaces><opening quotation mark>"
-            // Example: #include "MyNode.h", #include"TestNode.h"
-            MatchCollection matches = Regex.Matches(header.Value.Content, "#include\\s*\"");
-            if (matches == null)
-            {
-                Console.WriteLine("No include found");
-                return;
-            }
-            foreach (Match match in matches)
-            {
-                int includePathStart = match.Index + match.Length; // Starts after the opening quotating mark.
-                int includePathEnd = header.Value.Content.IndexOf('\"', includePathStart);
-                if(includePathEnd < 0 )
-                {
-                    throw new Exception("Closing quotation mark not found in include statement.");
-                }
-                string includePath = header.Value.Content.Substring(includePathStart, includePathEnd - includePathStart).Replace('/', '\\');
-                // TODO: Find a way to share ignore list with DB.Load.
-                if (includePath.Contains("\\registration.h"))
-                    continue;
-                // Find this header's directory so we can convert relative filepaths to absolute filepaths.
-                int currentDirectoryEndIndex = header.Key.LastIndexOf('\\');
-                if(currentDirectoryEndIndex >= 0)
-                {
-                    includePath = $"{header.Key.Substring(0, currentDirectoryEndIndex)}\\{includePath}";
-                }
-                if (!DB.Headers.ContainsKey(includePath))
-                {
-                    throw new Exception($"Include path {includePath} wasn't picked up by the Database!");
-                }
-                header.Value.Includes.Add(includePath);
-            }
-        }
-
-        public static void GenerateIncludes(KeyValuePair<string, DB.Header> header, string content, out string includes)
-        {
-            includes = $"#include \"{header.Key}\"\n";
-        }
-
-        public static string GetIncl()
+        public static string Solve(List<string> headerPaths, List<List<string>> headerDependencies, List<bool> headerHasTypes, List<string> headerIncludeNames)
         {
             // Step 1: Linearize all headers into a zero-based index.
-            // This maintains the mapping from indices to database headers.
-            List<DB.Header> indexToHeader = new List<DB.Header>();
             // This maintains the mapping from header filepaths to indices.
             Dictionary<string, int> keyToIndex = new Dictionary<string, int>();
             // This maintains every header's dependency, which can change during the algorithm.
             List<List<int>> indexToDependency = new List<List<int>>();
-            foreach (var header in DB.Headers)
+            for(int i = 0; i < headerPaths.Count; i++)
             {
-                int index = indexToHeader.Count;
-                indexToHeader.Add(header.Value);
-                keyToIndex[header.Key] = index;
+                keyToIndex[headerPaths[i]] = i;
                 indexToDependency.Add(new List<int>());
             }
-            for(int i = 0; i < indexToHeader.Count; i++) 
+            for(int i = 0; i < headerDependencies.Count; i++)
             {
-                var header = indexToHeader[i];
-                foreach(var dependency in header.Includes)
+                for(int j = 0; j < headerDependencies[i].Count; j++)
                 {
-                    int depIndex = keyToIndex[dependency];
-                    indexToDependency[i].Add(depIndex);
+                    indexToDependency[i].Add(keyToIndex[headerDependencies[i][j]]);
                 }
             }
             // Step 2: Find reg class dependencies for every reg class header.
@@ -89,9 +39,9 @@ namespace RegAutomation
             // Not actually used for non-reg class headers, but their spots are reserved for O(1) indexing.
             List<int> regClassIncludedCount = new List<int>();
             // Step 2.1: Initialization.
-            for (int i = 0; i < indexToHeader.Count; i++)
+            for (int i = 0; i < headerPaths.Count; i++)
             {
-                if (indexToHeader[i].Types.Count > 0)
+                if (headerHasTypes[i])
                     regClassHeaderIndices.Add(i);
                 visited.Add(false);
                 regClassIncludedCount.Add(0);
@@ -100,7 +50,7 @@ namespace RegAutomation
             // update dependencies to only contain reg class headers.
             foreach (int index in regClassHeaderIndices)
             {
-                if (indexToHeader[index].Types.Count == 0) continue;
+                if (!headerHasTypes[index]) continue;
                 List<int> updatedDependency = new List<int>();
                 RecursiveFindRegClassDependency(index, updatedDependency);
                 foreach (int depIndex in updatedDependency)
@@ -116,7 +66,7 @@ namespace RegAutomation
                 visited[currentIndex] = true;
                 foreach(int depIndex in indexToDependency[currentIndex])
                 {
-                    if (indexToHeader[depIndex].Types.Count > 0)
+                    if (headerHasTypes[depIndex])
                         updatedDependency.Add(depIndex);
                     else
                         RecursiveFindRegClassDependency(depIndex, updatedDependency);
@@ -152,7 +102,7 @@ namespace RegAutomation
             foreach (int index in regClassHeaderIndices)
             {
                 if (regClassIncludedCount[index] != 0)
-                    cycleList.AppendLine(indexToHeader[index].IncludeName); 
+                    cycleList.AppendLine(headerIncludeNames[index]); 
             }
             if(cycleList.Length > 0)
             {
@@ -163,7 +113,7 @@ namespace RegAutomation
             // We use the templated LINQ version of Reverse to iterate over topological order in reverse.
             foreach(int index in topologicalOrder.Reverse<int>())
             {
-                result.Append($"#include \".generated/{indexToHeader[index].IncludeName}.generated.h\"\n");
+                result.Append($"#include \".generated/{headerIncludeNames[index]}.generated.h\"\n");
             }
             return result.ToString();
         }

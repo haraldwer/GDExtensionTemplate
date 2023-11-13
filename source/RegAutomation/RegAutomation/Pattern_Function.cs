@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using RegAutomation.Core;
 
 namespace RegAutomation
 {
@@ -7,20 +8,13 @@ namespace RegAutomation
     {
         public static void ProcessType(DB.Type type)
         {
-            var result = Parser.Parse(type.Content, "REG_FUNCTION");
-
-            foreach (Macro macro in result)
+            Console.WriteLine($"REG_FUNCTION: " + Path.GetFileName(type.FileName));
+            foreach(FunctionMacro macro in FunctionParser.Instance.Parse(type.Content))
             {
-                Console.WriteLine("REG_FUNCTION: " + Path.GetFileName(type.FileName));
-
-                int paramStartIndex = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s is "(");
-                string name = macro.InnerContext.Tokens[paramStartIndex - 1];
-                List<string> paramResult = Parser.FindMatchingTokens(macro.InnerContext.Tokens, s => s is "," or ")", -1, paramStartIndex + 2);
-                
-                type.Functions[name] = new DB.Func()
+                type.Functions[macro.Name] = new DB.Func()
                 {
-                    Params = paramResult,
-                    IsStatic = macro.InnerContext.Tokens.Contains("static"),
+                    Params = macro.Params,
+                    IsStatic = macro.IsStatic,
                 };
             }
         }

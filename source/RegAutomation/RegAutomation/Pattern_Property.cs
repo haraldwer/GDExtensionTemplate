@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using RegAutomation.Core;
 
 namespace RegAutomation
 {
@@ -7,23 +9,13 @@ namespace RegAutomation
     {
         public static void ProcessType(DB.Type type)
         {
-            var result = Parser.Parse(type.Content, "REG_PROPERTY");
-            foreach (Macro macro in result)
+            Console.WriteLine($"REG_PROPERTY: " + Path.GetFileName(type.FileName));
+            foreach(PropertyMacro macro in PropertyParser.Instance.Parse(type.Content))
             {
-                Console.WriteLine("REG_PROPERTY: " + Path.GetFileName(type.FileName));
-
-                int decEnd = Parser.FindTokenMatch(macro.InnerContext.Tokens, s => s is ";" or "=" or "{");
-                string name = macro.InnerContext.Tokens[decEnd - 1];
-                string var = macro.InnerContext.Tokens[decEnd - 2];
-                
-                macro.Params.Content.TryGetValue("REG_P_Info", out string meta);
-                if (meta == null)
-                    meta = "";
-                
-                type.Properties[name] = new DB.Prop()
+                type.Properties[macro.Name] = new DB.Prop()
                 {
-                    Type = var,
-                    Meta = meta
+                    Type = macro.Type,
+                    Meta = macro.Meta,
                 };
             }
         }
@@ -44,7 +36,7 @@ namespace RegAutomation
                 
                 // Property bindings
                 propertyBindings += $"ClassDB::add_property(\"{type.Name}\", ";
-                string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}\""; 
+                string meta = func.Value.Meta == "" ? "" : $", {func.Value.Meta}"; 
                 propertyBindings += $"PropertyInfo(Variant::{variant}, \"{func.Key}\"{meta}), ";
                 
                 var (get, set) = GetGetterSetter(variant, func.Key);

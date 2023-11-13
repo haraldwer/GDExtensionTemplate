@@ -1,125 +1,107 @@
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace RegAutomation
+namespace RegAutomation.Core
 {
     using TokenCollection = List<string>;
-    
+    /// <summary>
+    /// A class that holds information about a context.
+    /// The declaration will only be filled if the context is an outer context.
+    /// </summary>
     public class Context
     {
         public int Start;
         public int End;
-        public string Content;
-        public TokenCollection Tokens; 
-        public TokenCollection Declaration;
+        public string Content = "";
+        public TokenCollection Tokens = new(); 
+        public string Declaration = "";
     }
-
+    /// <summary>
+    /// A class that holds information about the scope of a reg macro's meta properties.
+    /// Properties are stored as string-based key-value pairs.
+    /// </summary>
     public class Params
     {
         public int Start;
         public int End;
-        public Dictionary<string, string> Content;
+        public Dictionary<string, string> Content = new();
     }
-
-    public class Macro
+    /// <summary>
+    /// Base class for all parsers. Contains utility methods that implementations can use.
+    /// See also: <see cref="MacroParser{T}"></see>, which specializes for macros.
+    /// </summary>
+    public class ParserBase
     {
-        public string Name;
-        public Params Params; 
-        public Context OuterContext;
-        public Context InnerContext;
-        public int LineNumber;
-    }
-    
-    public class Parser
-    {
-        public static List<Macro> Parse(string content, string macro)
+		// Put utility methods that parser implementations could use here.
+		protected static Params FindParams(string content, int startIndex)
         {
-            // Look for macros
-            
-            // REG_CLASS() - needs to know class context
-            // REG_ENUM() - needs to know complete enum scope
-            // REG_FUNCTION() - needs to know complete function scope
-            // REG_PROPERTY() - needs to know complete property scope
-            
-            // Find outer context
-            // Find inner context
-            // Find parameters
-
-            List<Macro> result = new List<Macro>();
-            foreach (Match match in Regex.Matches(content, macro))
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            int level = 0;
+            List<int> propertySeparatorIndices = new List<int>();
+            for(int i = startIndex; i < content.Length; i++)
             {
-                var parameters = FindParams(content, match.Index);
-                int contextStart = parameters.End + 1;
-                Context outerContext = FindOuterContext(content, contextStart);
-                Context innerContext = FindInnerContext(content, contextStart);
-                int lineNumber = FindLineNumber(content, match.Index);
-                result.Add(new Macro()
+                if(level > 0)
                 {
-                    Name = macro,
-                    Params = parameters,
-                    OuterContext = outerContext,
-                    InnerContext = innerContext,
-                    LineNumber = lineNumber
-                });
-            }
-            return result;
-        }
-
-        private static Params FindParams(string content, int startIndex)
-        {
-            // Greedy param collection by splitting on ,
-            int paramStart = content.IndexOf('(', startIndex, 20) + 1;
-            int paramEnd = ScopeDepthSearch(content, paramStart - 1, '(', new[] {')'}) - 1;
-            string text = content.Substring(paramStart, paramEnd - paramStart);
-            List<string> parameters = text.Split(',').ToList(); // Consider scoped
-            if (parameters.Count == 1 && parameters[0] == "")
-                parameters.Clear();
-            
-            // Capture meta scope as one param
-            int scope = 0;
-            int scopeStart = -1;
-            string scopeParam = "";
-            Dictionary<string, string> scopedParams = new Dictionary<string, string>();
-            for (int i = 0; i < parameters.Count; i++)
-            {
-                scope += parameters[i].Count(x => x == '('); // Enter scope
-                if (scope > 0)
-                {
-                    if (scopeStart == -1) // Enter scope
-                        scopeStart = i;
-                    if (scopeParam != "")
-                        scopeParam += ", ";
-                    scopeParam += parameters[i];
-                    scope -= parameters[i].Count(x => x == ')'); // Exit scope
-                    if (scope <= 0) // Exit scope
+                    if (level == 1 && content[i] == ',')
                     {
-                        int metaStart = scopeParam.IndexOf('(') + 1;
-                        int metaEnd = scopeParam.LastIndexOf(')') - 1;
-                        string param = parameters[scopeStart].Split("=")[0].Trim();
-                        scopedParams[param] = scopeParam.Substring(metaStart, metaEnd - metaStart);
-                        scopeParam = "";
-                        scopeStart = -1;
+                        propertySeparatorIndices.Add(i);
                     }
+                }
+                if (content[i] == '(')
+                {
+                    if (level == 0) 
+                    {
+                        propertySeparatorIndices.Add(i);
+                    }
+                    level++;
+                }
+                else if (content[i] == ')')
+                {
+                    level--;
+                    if (level == 0) 
+                    {
+                        propertySeparatorIndices.Add(i);
+                        break;
+                    }
+                }
+            }
+            if(propertySeparatorIndices.Count == 0)
+                throw new Exception("Opening parenthesis not found.");
+            if(level != 0)
+                throw new Exception("Closing parenthesis not found.");
+            for(int i = 0; i < propertySeparatorIndices.Count - 1; i++)
+            {
+                int start = propertySeparatorIndices[i] + 1; // Skip the '(' or ','
+                int end = propertySeparatorIndices[i + 1]; // Skip the ')' or ','
+                string property = content.Substring(start, end - start).Trim();
+                int equalOperatorIndex = property.IndexOf('=');
+                if(equalOperatorIndex != -1)
+                {
+                    properties[property.Substring(0, equalOperatorIndex).Trim()] = property.Substring(equalOperatorIndex + 1).Trim();
                 }
                 else
                 {
-                    scopedParams[parameters[i]] = "";
+                    properties[property.Trim()] = "";
                 }
             }
             
             return new Params()
             {
-                Start = paramStart,
-                End = paramEnd,
-                Content = scopedParams
+                Start = propertySeparatorIndices[0] + 1,
+                End = propertySeparatorIndices[^1],
+                Content = properties,
             };
         }
 
-        private static Context FindOuterContext(string content, int startIndex)
+        protected static Context FindOuterContext(string content, int startIndex)
         {
             int start = ScopeOuterSearch(content, startIndex, '{', '}');
-            int end = ScopeDepthSearch(content, start, '{', new[] {'}'});
+            var (_, end) = ScopeDepthSearch(content, start, '{', '}');
             string text = content.Substring(start, end - start);
-            TokenCollection decl = Tokenize(FindDeclaration(content, start));
+            string decl = FindDeclaration(content, start);
             TokenCollection tokens = Tokenize(text);
             return new Context()
             {
@@ -131,21 +113,21 @@ namespace RegAutomation
             };
         }
 
-        private static Context FindInnerContext(string content, int startIndex)
+        protected static Context FindContext(string content, int startIndex, char open = '{', char close = '}')
         {
-            int scopeEnd = ScopeDepthSearch(content, startIndex, '{', new[] {'}', ';'});
-            string text = content.Substring(startIndex, scopeEnd - startIndex);
+            var (scopeStart, scopeEnd) = ScopeDepthSearch(content, startIndex, open, close);
+            string text = content.Substring(scopeStart, scopeEnd - scopeStart);
             TokenCollection tokens = Tokenize(text);
             return new Context()
             {
-                Start = startIndex,
+                Start = scopeStart,
                 End = scopeEnd,
                 Content = text,
                 Tokens = tokens
             };
         }
         
-        private static int FindLineNumber(string content, int matchIndex)
+        protected static int FindLineNumber(string content, int matchIndex)
         {
             int c = 1;
             for (int i = 0; i < Math.Min(matchIndex, content.Length); i++)
@@ -154,7 +136,7 @@ namespace RegAutomation
             return c; 
         }
         
-        private static string FindDeclaration(string content, int startIndex)
+        protected static string FindDeclaration(string content, int startIndex)
         {
             if (startIndex < 1 || startIndex >= content.Length)
                 return "";
@@ -183,7 +165,7 @@ namespace RegAutomation
             return stripped.Trim();
         }
         
-        private static TokenCollection Tokenize(string text)
+        protected static TokenCollection Tokenize(string text)
         {
             // Strip comments
             string strip = StripComments(text);
@@ -223,14 +205,14 @@ namespace RegAutomation
             return result;
         }
 
-        private static string StripComments(string text)
+        protected static string StripComments(string text)
         {
             text = Strip(text, "//", "\n");
             text = Strip(text, "/*", "*/");
             return text;
         }
         
-        private static string Strip(string text, string start, string end)
+        protected static string Strip(string text, string start, string end)
         {
             string result = "";
             int offset = 0;
@@ -248,7 +230,7 @@ namespace RegAutomation
             return result;
         }
         
-        private static int ScopeOuterSearch(string content, int startIndex, char open, char close)
+        protected static int ScopeOuterSearch(string content, int startIndex, char open, char close)
         {
             // TODO: Ignore comments
             
@@ -267,26 +249,31 @@ namespace RegAutomation
             return -1; 
         }
         
-        private static int ScopeDepthSearch(string content, int startIndex, char open, char[] close)
+        private static (int, int) ScopeDepthSearch(string content, int startIndex, char open, char close)
         {
             // TODO: Ignore comments
             
             int depth = 0;
+            int scopeStart = 0;
             for (int i = startIndex; i < content.Length; i++)
             {
                 if (content[i] == open)
+                {
+                    if(depth == 0)
+                        scopeStart = i;
                     depth++;
-                if (close.Contains(content[i]))
+                }
+                if (content[i] == close)
                 {
                     depth--;
                     if (depth <= 0)
-                        return i + 1;
+                        return (scopeStart, i + 1);
                 }
             }
-            return -1; 
+            return default; 
         }
 
-        public static int FindTokenMatch(TokenCollection InTokens, Func<string, bool> InMatch, int InSearchStart = 0)
+        protected static int FindTokenMatch(TokenCollection InTokens, Func<string, bool> InMatch, int InSearchStart = 0)
         {
             for (int i = InSearchStart; i < InTokens.Count; i++)
                 if (InMatch(InTokens[i]))
@@ -294,9 +281,9 @@ namespace RegAutomation
             return -1; 
         }
 
-        public static List<string> FindMatchingTokens(TokenCollection InTokens, Func<string, bool> InMatch, int InOffset = 0, int InSearchStart = 0)
+        protected static TokenCollection FindMatchingTokens(TokenCollection InTokens, Func<string, bool> InMatch, int InOffset = 0, int InSearchStart = 0)
         {
-            List<string> result = new List<string>();
+            TokenCollection result = new();
             while (true)
             {
                 int find = FindTokenMatch(InTokens, InMatch, InSearchStart);

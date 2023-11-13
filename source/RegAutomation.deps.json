@@ -7,14 +7,27 @@
   "targets": {
     ".NETCoreApp,Version=v7.0": {
       "RegAutomation/1.0.0": {
+        "dependencies": {
+          "RegAutomation.Core": "1.0.0"
+        },
         "runtime": {
           "RegAutomation.dll": {}
+        }
+      },
+      "RegAutomation.Core/1.0.0": {
+        "runtime": {
+          "RegAutomation.Core.dll": {}
         }
       }
     }
   },
   "libraries": {
     "RegAutomation/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RegAutomation.Core/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
