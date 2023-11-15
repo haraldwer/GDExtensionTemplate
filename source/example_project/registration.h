@@ -43,7 +43,6 @@ enum REG_PROPERTY_PROPERTIES
 	// Make it so you can expose Refs to classes that inherit from Resource. Do not use together with ExportAsNode.
 	// Use with TypedArrays to export an array of resources.
 	REG_P_ExportAsResource,
-
 };
 
 /**
