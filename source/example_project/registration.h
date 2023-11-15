@@ -20,6 +20,31 @@
  * float property = 0.0f;
  */
 #define REG_PROPERTY(...)
+enum REG_PROPERTY_PROPERTIES
+{
+	// [Type: PropertyHint]
+	// Specify the property's PropertyHint (default is PROPERTY_HINT_NONE).
+	// Automatically overridden if ExportAsNode/ExportAsResource is used.
+	// Can also be used on TypedArrays of variant types.
+	REG_P_HintType,
+	// [Type: String]
+	// Specify the hint string used by the property hint (default is empty string).
+	// Automatically overridden if the property is a TypedArray or if ExportAsNode/ExportAsResource is used.
+	// Can also be used on TypedArrays of variant types.
+	REG_P_HintString,
+	// [Type: PropertyUsageFlags]
+	// Specify the property's PropertyUsageFlags (default is PROPERTY_USAGE_DEFAULT).
+	REG_P_UsageFlags,
+	// [Type: None]
+	// Make it so you can expose pointers to classes that inherit from Node. Do not use together with ExportAsResource.
+	// Use with TypedArrays to export an array of nodes.
+	REG_P_ExportAsNode,
+	// [Type: None]
+	// Make it so you can expose Refs to classes that inherit from Resource. Do not use together with ExportAsNode.
+	// Use with TypedArrays to export an array of resources.
+	REG_P_ExportAsResource,
+
+};
 
 /**
 * Usage:
@@ -35,6 +60,7 @@
 #define REG_ENUM(...)
 enum REG_ENUM_PROPERTIES
 {
+	// [Type: None]
 	// If passed into REG_ENUM, interpret the enum as a Godot bitfield.
 	REG_P_Bitfield,
 };
