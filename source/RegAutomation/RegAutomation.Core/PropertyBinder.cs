@@ -61,19 +61,16 @@ namespace RegAutomation.Core
 
             // For Ref<T>s, re-wrap the property type with Ref to match with C++ definition.
             if(propertyReferenceType is PropertyReferenceType.Ref)
-                propertyType = $"Ref<{propertyType}>";
+                propertyType = $"Ref<{propertyType}> ";
             // For pointers, we insert the pointer asterisk back into the function declarations.
-            // We can't put this on propertyType because the asterisk is placed right next to the type for the getter,
-            // but right next to the parameter for the setter.
-            string pointerSymbol;
-            if (propertyReferenceType is PropertyReferenceType.Pointer)
-                pointerSymbol = "*";
+            else if (propertyReferenceType is PropertyReferenceType.Pointer)
+                propertyType = $"{propertyType} *";
             else
-                pointerSymbol = "";
+                propertyType = $"{propertyType} ";
 
             // Finally, construct the getters and setters.
-            string genGetterDeclaration = $"\t{propertyType}{pointerSymbol} _gen_{getter}() const {{ return {propertyName}; }}\n";
-            string genSetterDeclaration = $"\tvoid _gen_{setter}({propertyType} {pointerSymbol}p) {{ {propertyName} = p; }}\n";
+            string genGetterDeclaration = $"\t{propertyType}_gen_{getter}() const {{ return {propertyName}; }}\n";
+            string genSetterDeclaration = $"\tvoid _gen_{setter}({propertyType}p) {{ {propertyName} = p; }}\n";
 
             return new (
                 addPropertyStatement, 
