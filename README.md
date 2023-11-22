@@ -31,7 +31,7 @@ Here is how to use them:
     * [Variant types](https://docs.godotengine.org/en/stable/classes/index.html#variant-types)
     * `Node` or its subclass: The property must be a pointer with a default value (for instance, `nullptr`).
     * `Resource` or its subclass: the property must be wrapped by Godot's `Ref<T>` template.
-    * `TypedArray<T>`: `T` must be one of the three above types.
+    * `TypedArray<T>`: `T` must be one of the three types above.
  * ``REG_ENUM()`` - Put this in front of your enum.
 
 There is an example class called GDExample that you can use for reference. 
