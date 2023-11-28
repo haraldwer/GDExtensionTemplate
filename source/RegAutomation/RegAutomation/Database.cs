@@ -1,3 +1,4 @@
+using RegAutomation.Core;
 
 namespace RegAutomation
 {
@@ -12,7 +13,11 @@ namespace RegAutomation
         public class Prop
         {
             public string Type = "";
-            public string Meta = "";
+            public PropertyReferenceType ReferenceType = PropertyReferenceType.Value;
+            public PropertyExportFlags ExportFlags = PropertyExportFlags.None;
+            public string HintType = "";
+            public string HintString = "";
+            public string UsageFlags = "";
         }
 
         public class Enum

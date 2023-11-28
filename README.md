@@ -27,7 +27,11 @@ Some macros exist in reg.h that provide automated registration for classes, func
 Here is how to use them:
  * ``REG_CLASS()`` - Use this macro instead of GDCLASS().
  * ``REG_FUNCTION()`` - Put this in front of your function.
- * ``REG_PROPERTY()`` - Put this in front of your property. Supports ``PropertyInfo`` meta parameters.
+ * ``REG_PROPERTY()`` - Put this in front of your property. Supports ``PropertyInfo`` meta parameters. The property's type must be one of the following:
+    * [Variant types](https://docs.godotengine.org/en/stable/classes/index.html#variant-types)
+    * `Node` or its subclass: The property must be a pointer with a default value (for instance, `nullptr`).
+    * `Resource` or its subclass: the property must be wrapped by Godot's `Ref<T>` template.
+    * `TypedArray<T>`: `T` must be one of the three types above.
  * ``REG_ENUM()`` - Put this in front of your enum.
 
 There is an example class called GDExample that you can use for reference. 
@@ -35,6 +39,7 @@ Registration-code will be injected into ``extension.cpp``. Class bindings will b
 
 ## Known issues / Future work
  * The debugger does not attach automatically to the godot process. You can still attach manually.
+ * Multi-dimensional array properties cannot be exported. For now, we recommend registering functions that allow GDScript to interact with the multi-dimensional array instead.
 
 ## Notes
  * Intellisense / Intellij will only work after first compile.

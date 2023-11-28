@@ -41,13 +41,34 @@ namespace RegAutomation.Core
             Dictionary<string, string> properties = new Dictionary<string, string>();
             int level = 0;
             List<int> propertySeparatorIndices = new List<int>();
+            List<int> equalOperatorIndices = new List<int>();
+            bool isParsingString = false;
             for(int i = startIndex; i < content.Length; i++)
             {
-                if(level > 0)
+                // Handle strings here.
+                if(content[i] == '"')
                 {
-                    if (level == 1 && content[i] == ',')
+                    isParsingString = !isParsingString;
+                    continue;
+                }
+                else if(i < content.Length - 1 && content[i] == '\\' && content[i + 1] == '"')
+                {
+                    i++; // Skip the escaped double-quotes.
+                    continue;
+                }
+                else if(isParsingString)
+                {
+                    continue; // Passing through string literal, so don't check for separators until another double-quote is found.
+                }
+                if(level == 1)
+                {
+                    if (content[i] == ',')
                     {
                         propertySeparatorIndices.Add(i);
+                    }
+                    else if (content[i] == '=')
+                    {
+                        equalOperatorIndices.Add(i);
                     }
                 }
                 if (content[i] == '(')
@@ -72,19 +93,24 @@ namespace RegAutomation.Core
                 throw new Exception("Opening parenthesis not found.");
             if(level != 0)
                 throw new Exception("Closing parenthesis not found.");
+            int equalOperatorIndexPointer = 0;
             for(int i = 0; i < propertySeparatorIndices.Count - 1; i++)
             {
                 int start = propertySeparatorIndices[i] + 1; // Skip the '(' or ','
                 int end = propertySeparatorIndices[i + 1]; // Skip the ')' or ','
-                string property = content.Substring(start, end - start).Trim();
-                int equalOperatorIndex = property.IndexOf('=');
-                if(equalOperatorIndex != -1)
+                while(equalOperatorIndexPointer < equalOperatorIndices.Count && equalOperatorIndices[equalOperatorIndexPointer] <= start)
                 {
-                    properties[property.Substring(0, equalOperatorIndex).Trim()] = property.Substring(equalOperatorIndex + 1).Trim();
+                    equalOperatorIndexPointer++;
+                }
+                if(equalOperatorIndexPointer < equalOperatorIndices.Count && equalOperatorIndices[equalOperatorIndexPointer] < end)
+                {
+                    int equalOperatorIndex = equalOperatorIndices[equalOperatorIndexPointer];
+                    properties[content[start..equalOperatorIndex].Trim()] = content[(equalOperatorIndex + 1)..end].Trim();
+                    equalOperatorIndexPointer++;
                 }
                 else
                 {
-                    properties[property.Trim()] = "";
+                    properties[content[start..end].Trim()] = "";
                 }
             }
             

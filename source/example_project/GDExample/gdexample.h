@@ -3,6 +3,7 @@
 #include "example_project/registration.h"
 
 #include <godot_cpp/classes/node3d.hpp>
+#include <godot_cpp/classes/image.hpp>
 
 namespace godot
 {
@@ -33,7 +34,9 @@ namespace godot
         REG_FUNCTION()
         static double multiply(double x, double y);
         
-        REG_PROPERTY(REG_P_Info=(PROPERTY_HINT_RANGE, "0,20,0.01"))
+        REG_PROPERTY(
+            REG_P_HintType=PROPERTY_HINT_RANGE,
+            REG_P_HintString="0,20,0.01")
         float property = 0;
 
         REG_PROPERTY()
@@ -44,6 +47,31 @@ namespace godot
          * (TEST COMMENT)
          */
     	bool angry;
+
+        REG_PROPERTY(
+            REG_P_HintType=PROPERTY_HINT_FILE,
+            REG_P_HintString="*.png,*.webp,*.svg")
+        TypedArray<String> image_filepath_array;
+
+        REG_PROPERTY(
+            REG_P_HintType=PROPERTY_HINT_RANGE,
+            REG_P_HintString="0,1,0.001")
+        TypedArray<float> float_array;
+
+        REG_PROPERTY()
+        PackedInt32Array packed_int32_array;
+        
+        REG_PROPERTY(REG_P_ExportAsResource)
+        TypedArray<Image> image_array;
+
+        REG_PROPERTY(REG_P_ExportAsResource)
+        Ref<Image> image_ref;
+
+        REG_PROPERTY(REG_P_ExportAsNode)
+        TypedArray<Node3D> node_array;
+
+        REG_PROPERTY(REG_P_ExportAsNode)
+        Node3D *node_pointer = nullptr;
         
     private:
         
